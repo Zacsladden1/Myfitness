@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Planner - Assessment</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #2196F3;
+            --text-color: #333;
+            --background-color: #f5f5f5;
+            --card-background: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            background: var(--card-background);
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%) rotate(45deg);
+            }
+            100% {
+                transform: translateX(100%) rotate(45deg);
+            }
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .hero {
+                padding: 3rem 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>Fitness Planner</h1>
+        <p>Get your personalized fitness and nutrition plan</p>
+    </div>
+
+    <div class="container">
+        <form id="fitnessForm" onsubmit="return handleSubmit(event)">
+            <div class="form-group">
+                <label for="age">Age:</label>
+                <input type="number" id="age" name="age" required>
+            </div>
+
+            <div class="form-group">
+                <label for="gender">Gender:</label>
+                <select id="gender" name="gender" required>
+                    <option value="">Select gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="weight">Weight (kg):</label>
+                <input type="number" id="weight" name="weight" step="0.1" required>
+            </div>
+
+            <div class="form-group">
+                <label for="height">Height (cm):</label>
+                <input type="number" id="height" name="height" required>
+            </div>
+
+            <div class="form-group">
+                <label for="activityLevel">Activity Level:</label>
+                <select id="activityLevel" name="activityLevel" required>
+                    <option value="">Select activity level</option>
+                    <option value="sedentary">Sedentary (little or no exercise)</option>
+                    <option value="light">Lightly active (light exercise/sports 1-3 days/week)</option>
+                    <option value="moderate">Moderately active (moderate exercise/sports 3-5 days/week)</option>
+                    <option value="very">Very active (hard exercise/sports 6-7 days/week)</option>
+                    <option value="extra">Extra active (very hard exercise/sports & physical job or training twice per day)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="fitnessGoal">Fitness Goal:</label>
+                <select id="fitnessGoal" name="fitnessGoal" required>
+                    <option value="">Select fitness goal</option>
+                    <option value="weight-loss">Weight Loss</option>
+                    <option value="muscle-gain">Muscle Gain</option>
+                    <option value="maintenance">Maintenance</option>
+                    <option value="general-fitness">General Fitness</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="experienceLevel">Experience Level:</label>
+                <select id="experienceLevel" name="experienceLevel" required>
+                    <option value="">Select experience level</option>
+                    <option value="beginner">Beginner (0-1 year)</option>
+                    <option value="intermediate">Intermediate (1-3 years)</option>
+                    <option value="advanced">Advanced (3+ years)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="gymAccess">Do you have access to a gym?</label>
+                <select id="gymAccess" name="gymAccess" required>
+                    <option value="">Select option</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="dietaryPreference">Dietary Preference:</label>
+                <select id="dietaryPreference" name="dietaryPreference" required>
+                    <option value="">Select dietary preference</option>
+                    <option value="omnivore">Omnivore (Everything)</option>
+                    <option value="vegetarian">Vegetarian</option>
+                    <option value="vegan">Vegan</option>
+                    <option value="pescatarian">Pescatarian</option>
+                </select>
+            </div>
+
+            <div class="button-container">
+                <button type="submit" class="btn">
+                    <i class="fas fa-calculator"></i>
+                    Generate My Plan
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function handleSubmit(event) {
+            event.preventDefault();
+            
+            // Get form data
+            const formData = {
+                age: document.getElementById('age').value,
+                gender: document.getElementById('gender').value,
+                weight: document.getElementById('weight').value,
+                height: document.getElementById('height').value,
+                activityLevel: document.getElementById('activityLevel').value,
+                fitnessGoal: document.getElementById('fitnessGoal').value,
+                experienceLevel: document.getElementById('experienceLevel').value,
+                gymAccess: document.getElementById('gymAccess').value,
+                dietaryPreference: document.getElementById('dietaryPreference').value
+            };
+
+            // Store data in localStorage
+            localStorage.setItem('fitnessData', JSON.stringify(formData));
+
+            // Redirect to results page
+            window.location.href = 'results.html';
+            
+            return false;
+        }
+    </script>
+</body>
+</html>> 
