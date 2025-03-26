@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Personalized Workout Plan</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #2196F3;
+            --accent-color: #FFC107;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+            --border-color: #ddd;
+            --shadow: 0 2px 4px rgba(0,0,0,0.1);
+            --gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .hero-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1517836357463-d25dfeac3438?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 120px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(76, 175, 80, 0.3), rgba(33, 150, 243, 0.3));
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero-section h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            font-weight: 700;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .button-container {
+            position: sticky;
+            top: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #4CAF50, #2196F3);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-decoration: none;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .btn i {
+            font-size: 18px;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to right,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.3) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: rotate(45deg);
+            transition: 0.5s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:hover::after {
+            left: 100%;
+        }
+
+        .plan-section {
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+
+        .plan-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+
+        .day-workout {
+            background: white;
+            padding: 30px;
+            margin: 20px 0;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--primary-color);
+            transition: transform 0.3s ease;
+        }
+
+        .day-workout:hover {
+            transform: translateX(5px);
+        }
+
+        .workout-type {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .push { background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%); color: #c62828; }
+        .pull { background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); color: #1565c0; }
+        .legs { background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); color: #2e7d32; }
+        .rest { background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%); color: #6a1b9a; }
+
+        .exercise-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .exercise-list li {
+            margin: 15px 0;
+            padding: 15px;
+            background: var(--background-color);
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: transform 0.2s ease;
+        }
+
+        .exercise-list li:hover {
+            transform: translateX(5px);
+        }
+
+        .exercise-list li i {
+            color: var(--primary-color);
+            font-size: 1.2em;
+        }
+
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 80px 20px;
+            }
+
+            .hero-section h1 {
+                font-size: 2.5em;
+            }
+
+            .plan-section {
+                padding: 25px;
+            }
+
+            .button-container {
+                flex-direction: column;
+                padding: 15px;
+            }
+
+            button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-section">
+        <div class="hero-content">
+            <h1>Your Personalized Workout Plan</h1>
+            <p>Level up your fitness game with this custom 7-day plan</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="button-container">
+            <button onclick="downloadWorkoutPlanPDF()" class="btn">
+                <i class="fas fa-download"></i>
+                Download Workout Plan PDF
+            </button>
+            <a href="results.html" class="btn">
+                <i class="fas fa-arrow-left"></i>
+                Back to Results
+            </a>
+        </div>
+
+        <div class="plan-section">
+            <h2>Your 7-Day Workout Plan</h2>
+            <div id="workoutPlanContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // Get stored form data
+        const formData = JSON.parse(localStorage.getItem('fitnessData'));
+        if (!formData) {
+            window.location.href = 'fitness.html';
+        }
+
+        // Generate and display workout plan
+        document.getElementById('workoutPlanContent').innerHTML = generatePersonalizedWorkoutPlan(formData.experienceLevel, formData.gymAccess, formData.fitnessGoal, formData.activityLevel);
+
+        // PDF Generation Function
+        function downloadWorkoutPlanPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Add header
+            doc.setFillColor(76, 175, 80);
+            doc.rect(0, 0, 210, 30, "F");
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(24);
+            doc.text("Your Personalized Workout Plan", 105, 20, { align: "center" });
+            
+            // Add workout info
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(12);
+            doc.text("Workout Information", 20, 40);
+            doc.setFontSize(10);
+            doc.text([
+                `Experience Level: ${formData.experienceLevel}`,
+                `Equipment Available: ${formData.gymAccess === 'yes' ? 'Full Gym Access' : 'Home Equipment Only'}`,
+                `Fitness Goal: ${formData.fitnessGoal}`,
+                `Activity Level: ${formData.activityLevel}`
+            ], 20, 50);
+
+            // Add workout days
+            let yPos = 80;
+            const workoutDays = document.querySelectorAll('.day-workout');
+            workoutDays.forEach((day, index) => {
+                if (yPos > 250) {
+                    doc.addPage();
+                    yPos = 20;
+                }
+
+                const workoutType = day.querySelector('.workout-type').textContent;
+                const dayTitle = day.querySelector('h4').textContent;
+
+                // Day header with color coding
+                let color;
+                if (workoutType.includes('Push')) color = [255, 235, 238];
+                else if (workoutType.includes('Pull')) color = [227, 242, 253];
+                else if (workoutType.includes('Legs')) color = [232, 245, 233];
+                else color = [243, 229, 245];
+
+                doc.setFillColor(...color);
+                doc.rect(10, yPos, 190, 10, "F");
+                doc.setFontSize(12);
+                doc.text(workoutType, 20, yPos + 7);
+
+                yPos += 15;
+                doc.setFontSize(11);
+                doc.text(dayTitle, 15, yPos);
+                yPos += 5;
+
+                const exercises = day.querySelectorAll('li');
+                exercises.forEach(exercise => {
+                    doc.setFontSize(9);
+                    doc.text(exercise.textContent, 20, yPos);
+                    yPos += 5;
+                });
+            });
+
+            // Add footer
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(8);
+                doc.text(`Page ${i} of ${pageCount}`, 105, 285, { align: "center" });
+            }
+
+            doc.save('workout-plan.pdf');
+        }
+
+        function generatePersonalizedWorkoutPlan(experienceLevel, gymAccess, fitnessGoal, activityLevel) {
+            const workouts = {
+                beginner: {
+                    yes: {
+                        push: [
+                            'Push-ups: 3 sets x 8-12 reps',
+                            'Dumbbell Shoulder Press: 3 sets x 10-12 reps',
+                            'Tricep Pushdowns: 3 sets x 12-15 reps',
+                            'Lateral Raises: 3 sets x 12-15 reps',
+                            'Chest Flyes: 3 sets x 12-15 reps'
+                        ],
+                        pull: [
+                            'Lat Pulldowns: 3 sets x 10-12 reps',
+                            'Dumbbell Rows: 3 sets x 10-12 reps',
+                            'Face Pulls: 3 sets x 12-15 reps',
+                            'Bicep Curls: 3 sets x 12-15 reps',
+                            'Rear Delt Flyes: 3 sets x 12-15 reps'
+                        ],
+                        legs: [
+                            'Squats: 3 sets x 10-12 reps',
+                            'Romanian Deadlifts: 3 sets x 10-12 reps',
+                            'Leg Press: 3 sets x 12-15 reps',
+                            'Calf Raises: 3 sets x 15-20 reps',
+                            'Leg Extensions: 3 sets x 12-15 reps'
+                        ]
+                    },
+                    no: {
+                        push: [
+                            'Push-ups: 3 sets x 8-12 reps',
+                            'Diamond Push-ups: 3 sets x 8-12 reps',
+                            'Pike Push-ups: 3 sets x 8-12 reps',
+                            'Tricep Dips: 3 sets x 10-15 reps',
+                            'Decline Push-ups: 3 sets x 8-12 reps'
+                        ],
+                        pull: [
+                            'Pull-ups/Inverted Rows: 3 sets x 8-12 reps',
+                            'Resistance Band Rows: 3 sets x 12-15 reps',
+                            'Superman Holds: 3 sets x 30 seconds',
+                            'Resistance Band Curls: 3 sets x 12-15 reps',
+                            'Plank Rows: 3 sets x 10-12 reps each side'
+                        ],
+                        legs: [
+                            'Bodyweight Squats: 3 sets x 12-15 reps',
+                            'Bulgarian Split Squats: 3 sets x 10-12 reps each leg',
+                            'Glute Bridges: 3 sets x 15-20 reps',
+                            'Calf Raises: 3 sets x 15-20 reps',
+                            'Lunges: 3 sets x 10-12 reps each leg'
+                        ]
+                    }
+                },
+                intermediate: {
+                    yes: {
+                        push: [
+                            'Bench Press: 4 sets x 8-12 reps',
+                            'Overhead Press: 4 sets x 8-12 reps',
+                            'Incline Dumbbell Press: 4 sets x 10-12 reps',
+                            'Tricep Pushdowns: 4 sets x 12-15 reps',
+                            'Lateral Raises: 4 sets x 12-15 reps'
+                        ],
+                        pull: [
+                            'Barbell Rows: 4 sets x 8-12 reps',
+                            'Pull-ups: 4 sets x 8-12 reps',
+                            'Face Pulls: 4 sets x 12-15 reps',
+                            'Bicep Curls: 4 sets x 12-15 reps',
+                            'Shrugs: 4 sets x 12-15 reps'
+                        ],
+                        legs: [
+                            'Barbell Squats: 4 sets x 8-12 reps',
+                            'Romanian Deadlifts: 4 sets x 8-12 reps',
+                            'Leg Press: 4 sets x 12-15 reps',
+                            'Calf Raises: 4 sets x 15-20 reps',
+                            'Leg Extensions: 4 sets x 12-15 reps'
+                        ]
+                    },
+                    no: {
+                        push: [
+                            'Push-ups: 4 sets x 12-15 reps',
+                            'Diamond Push-ups: 4 sets x 12-15 reps',
+                            'Pike Push-ups: 4 sets x 12-15 reps',
+                            'Tricep Dips: 4 sets x 12-15 reps',
+                            'Decline Push-ups: 4 sets x 12-15 reps'
+                        ],
+                        pull: [
+                            'Pull-ups: 4 sets x 8-12 reps',
+                            'Inverted Rows: 4 sets x 12-15 reps',
+                            'Resistance Band Rows: 4 sets x 15-20 reps',
+                            'Superman Holds: 4 sets x 45 seconds',
+                            'Plank Rows: 4 sets x 12-15 reps each side'
+                        ],
+                        legs: [
+                            'Pistol Squats: 4 sets x 8-12 reps each leg',
+                            'Bulgarian Split Squats: 4 sets x 12-15 reps each leg',
+                            'Glute Bridges: 4 sets x 20-25 reps',
+                            'Calf Raises: 4 sets x 20-25 reps',
+                            'Lunges: 4 sets x 12-15 reps each leg'
+                        ]
+                    }
+                },
+                advanced: {
+                    yes: {
+                        push: [
+                            'Bench Press: 5 sets x 6-10 reps',
+                            'Overhead Press: 5 sets x 6-10 reps',
+                            'Incline Dumbbell Press: 5 sets x 8-12 reps',
+                            'Tricep Pushdowns: 5 sets x 12-15 reps',
+                            'Lateral Raises: 5 sets x 12-15 reps'
+                        ],
+                        pull: [
+                            'Barbell Rows: 5 sets x 6-10 reps',
+                            'Pull-ups: 5 sets x 8-12 reps',
+                            'Face Pulls: 5 sets x 12-15 reps',
+                            'Bicep Curls: 5 sets x 12-15 reps',
+                            'Shrugs: 5 sets x 12-15 reps'
+                        ],
+                        legs: [
+                            'Barbell Squats: 5 sets x 6-10 reps',
+                            'Romanian Deadlifts: 5 sets x 6-10 reps',
+                            'Leg Press: 5 sets x 12-15 reps',
+                            'Calf Raises: 5 sets x 15-20 reps',
+                            'Leg Extensions: 5 sets x 12-15 reps'
+                        ]
+                    },
+                    no: {
+                        push: [
+                            'Push-ups: 5 sets x 15-20 reps',
+                            'Diamond Push-ups: 5 sets x 15-20 reps',
+                            'Pike Push-ups: 5 sets x 15-20 reps',
+                            'Tricep Dips: 5 sets x 15-20 reps',
+                            'Decline Push-ups: 5 sets x 15-20 reps'
+                        ],
+                        pull: [
+                            'Pull-ups: 5 sets x 10-15 reps',
+                            'Inverted Rows: 5 sets x 15-20 reps',
+                            'Resistance Band Rows: 5 sets x 20-25 reps',
+                            'Superman Holds: 5 sets x 60 seconds',
+                            'Plank Rows: 5 sets x 15-20 reps each side'
+                        ],
+                        legs: [
+                            'Pistol Squats: 5 sets x 10-15 reps each leg',
+                            'Bulgarian Split Squats: 5 sets x 15-20 reps each leg',
+                            'Glute Bridges: 5 sets x 25-30 reps',
+                            'Calf Raises: 5 sets x 25-30 reps',
+                            'Lunges: 5 sets x 15-20 reps each leg'
+                        ]
+                    }
+                }
+            };
+
+            let plan = '';
+            const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            
+            // Adjust workout frequency based on activity level
+            let workoutFrequency = {
+                sedentary: 3,
+                light: 4,
+                moderate: 5,
+                very: 6,
+                extra: 7
+            };
+
+            let numWorkouts = workoutFrequency[activityLevel];
+            
+            for (let day = 1; day <= 7; day++) {
+                let workoutType, exercises;
+                
+                // For sedentary users, only show 3 workouts per week
+                if (activityLevel === 'sedentary' && day > 3) {
+                    workoutType = 'Rest Day';
+                    exercises = ['Active Recovery', 'Light Stretching', 'Mobility Work'];
+                } else if (activityLevel === 'light' && day > 4) {
+                    workoutType = 'Rest Day';
+                    exercises = ['Active Recovery', 'Light Stretching', 'Mobility Work'];
+                } else if (activityLevel === 'moderate' && day > 5) {
+                    workoutType = 'Rest Day';
+                    exercises = ['Active Recovery', 'Light Stretching', 'Mobility Work'];
+                } else if (activityLevel === 'very' && day > 6) {
+                    workoutType = 'Rest Day';
+                    exercises = ['Active Recovery', 'Light Stretching', 'Mobility Work'];
+                } else {
+                    // Regular workout days
+                    if (day === 1 || day === 4) {
+                        workoutType = 'Push Day';
+                        exercises = workouts[experienceLevel][gymAccess].push;
+                    } else if (day === 2 || day === 5) {
+                        workoutType = 'Pull Day';
+                        exercises = workouts[experienceLevel][gymAccess].pull;
+                    } else if (day === 3 || day === 6) {
+                        workoutType = 'Legs Day';
+                        exercises = workouts[experienceLevel][gymAccess].legs;
+                    } else {
+                        workoutType = 'Rest Day';
+                        exercises = ['Active Recovery', 'Light Stretching', 'Mobility Work'];
+                    }
+                }
+
+                const typeClass = workoutType.toLowerCase().replace(' day', '');
+                
+                plan += `
+                    <div class="day-workout">
+                        <div class="workout-type ${typeClass}">${workoutType}</div>
+                        <h4>${days[day-1]}</h4>
+                        <ul class="exercise-list">
+                            ${exercises.map(exercise => 
+                                `<li><i class="fas fa-dumbbell"></i>${exercise}</li>`
+                            ).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+            return plan;
+        }
+    </script>
+</body>
+</html> 

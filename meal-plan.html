@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Personalized Meal Plan</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #2196F3;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+            --border-color: #ddd;
+            --shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .hero-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1490645935967-10de6ba17061?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 100px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(76, 175, 80, 0.2), rgba(33, 150, 243, 0.2));
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero-section h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .button-container {
+            position: sticky;
+            top: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #4CAF50, #2196F3);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-decoration: none;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .btn i {
+            font-size: 18px;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to right,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.3) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: rotate(45deg);
+            transition: 0.5s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:hover::after {
+            left: 100%;
+        }
+
+        .plan-section {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+
+        .plan-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2em;
+        }
+
+        .day-meals {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            padding: 25px;
+            margin: 15px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .meal-type {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .breakfast { background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); color: #ef6c00; }
+        .lunch { background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); color: #1565c0; }
+        .dinner { background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); color: #2e7d32; }
+        .snack { background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%); color: #6a1b9a; }
+
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 60px 20px;
+            }
+
+            .hero-section h1 {
+                font-size: 2em;
+            }
+
+            .plan-section {
+                padding: 25px;
+            }
+
+            .button-container {
+                flex-direction: column;
+                padding: 15px;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-section">
+        <div class="hero-content">
+            <h1>Your Personalized Meal Plan</h1>
+            <p>Here's your custom 7-day meal plan tailored to your goals</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="button-container">
+            <button onclick="downloadMealPlanPDF()" class="btn">
+                <i class="fas fa-download"></i>
+                Download Meal Plan PDF
+            </button>
+            <a href="results.html" class="btn">
+                <i class="fas fa-arrow-left"></i>
+                Back to Results
+            </a>
+        </div>
+
+        <div class="plan-section">
+            <h2>Your 7-Day Meal Plan</h2>
+            <div id="mealPlanContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // Get stored form data
+        const formData = JSON.parse(localStorage.getItem('fitnessData'));
+        if (!formData) {
+            window.location.href = 'fitness.html';
+        }
+
+        // Generate and display meal plan
+        document.getElementById('mealPlanContent').innerHTML = generatePersonalizedMealPlan(formData.dietaryPreference, formData.fitnessGoal);
+
+        // PDF Generation Function
+        function downloadMealPlanPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Add header
+            doc.setFillColor(76, 175, 80);
+            doc.rect(0, 0, 210, 30, "F");
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(24);
+            doc.text("Your Personalized Meal Plan", 105, 20, { align: "center" });
+            
+            // Add meal plan info
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(12);
+            doc.text("Meal Plan Information", 20, 40);
+            doc.setFontSize(10);
+            doc.text([
+                `Dietary Preference: ${formData.dietaryPreference}`,
+                `Fitness Goal: ${formData.fitnessGoal}`,
+                `Target Calories: ${formData.targetCalories}`
+            ], 20, 50);
+
+            // Add meal days
+            let yPos = 80;
+            const mealDays = document.querySelectorAll('.day-meals');
+            mealDays.forEach((day, index) => {
+                if (yPos > 250) {
+                    doc.addPage();
+                    yPos = 20;
+                }
+
+                const dayTitle = day.querySelector('h4').textContent;
+                doc.setFontSize(12);
+                doc.text(dayTitle, 15, yPos);
+                yPos += 10;
+
+                const meals = day.querySelectorAll('.meal-type');
+                meals.forEach(meal => {
+                    const mealType = meal.textContent;
+                    const mealContent = meal.nextElementSibling.textContent;
+
+                    // Meal type with color coding
+                    let color;
+                    if (mealType.includes('Breakfast')) color = [255, 243, 224];
+                    else if (mealType.includes('Lunch')) color = [227, 242, 253];
+                    else if (mealType.includes('Dinner')) color = [232, 245, 233];
+                    else color = [243, 229, 245];
+
+                    doc.setFillColor(...color);
+                    doc.rect(10, yPos, 190, 10, "F");
+                    doc.setFontSize(11);
+                    doc.text(mealType, 15, yPos + 7);
+
+                    yPos += 15;
+                    doc.setFontSize(9);
+                    doc.text(mealContent, 20, yPos);
+                    yPos += 5;
+                });
+            });
+
+            // Add footer
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(8);
+                doc.text(`Page ${i} of ${pageCount}`, 105, 285, { align: "center" });
+            }
+
+            doc.save('meal-plan.pdf');
+        }
+
+        function generatePersonalizedMealPlan(dietaryPreference, fitnessGoal) {
+            const targetCalories = formData.targetCalories;
+            const proteinTarget = formData.proteinTarget;
+            
+            // Calculate calories per meal based on fitness goal
+            let mealCalories = {
+                breakfast: Math.round(targetCalories * 0.25),
+                morningSnack: Math.round(targetCalories * 0.15),
+                lunch: Math.round(targetCalories * 0.30),
+                afternoonSnack: Math.round(targetCalories * 0.15),
+                dinner: Math.round(targetCalories * 0.15)
+            };
+
+            const meals = {
+                omnivore: {
+                    breakfast: [
+                        { name: 'Protein Oatmeal Bowl', calories: 450, protein: 25, details: 'Oatmeal with banana, honey, protein powder, chia seeds, and almond milk' },
+                        { name: 'High-Protein Breakfast Burrito', calories: 500, protein: 35, details: 'Whole grain tortilla with eggs, black beans, turkey sausage, and avocado' },
+                        { name: 'Greek Yogurt Parfait', calories: 400, protein: 30, details: 'Greek yogurt with granola, mixed berries, and honey' },
+                        { name: 'Protein Smoothie Bowl', calories: 450, protein: 28, details: 'Protein powder, spinach, banana, berries, and almond milk topped with granola' }
+                    ],
+                    lunch: [
+                        { name: 'Grilled Chicken Quinoa Bowl', calories: 550, protein: 45, details: 'Grilled chicken breast, quinoa, roasted vegetables, and tahini dressing' },
+                        { name: 'Tuna Mediterranean Wrap', calories: 500, protein: 35, details: 'Whole grain wrap with tuna, hummus, mixed vegetables, and feta' },
+                        { name: 'Turkey Protein Bowl', calories: 550, protein: 40, details: 'Ground turkey, brown rice, black beans, and mixed vegetables' },
+                        { name: 'Salmon Power Bowl', calories: 600, protein: 45, details: 'Grilled salmon, sweet potato, kale, and avocado' }
+                    ],
+                    dinner: [
+                        { name: 'Lean Beef Stir-Fry', calories: 500, protein: 40, details: 'Lean beef strips, brown rice, mixed vegetables, and low-sodium sauce' },
+                        { name: 'Grilled Chicken Sweet Potato', calories: 450, protein: 35, details: 'Grilled chicken breast, roasted sweet potato, and steamed broccoli' },
+                        { name: 'Shrimp Protein Pasta', calories: 500, protein: 35, details: 'Whole grain pasta, shrimp, spinach, and light cream sauce' },
+                        { name: 'Turkey Meatballs', calories: 450, protein: 35, details: 'Turkey meatballs, whole grain pasta, and marinara sauce' }
+                    ],
+                    snacks: [
+                        { name: 'Protein Power Mix', calories: 200, protein: 10, details: 'Mixed nuts, dried fruit, and protein-rich seeds' },
+                        { name: 'Greek Yogurt Parfait', calories: 250, protein: 20, details: 'Greek yogurt with honey and mixed berries' },
+                        { name: 'Protein Bar', calories: 200, protein: 15, details: 'High-protein bar with natural ingredients' },
+                        { name: 'Apple Protein Combo', calories: 250, protein: 12, details: 'Apple with peanut butter and protein powder' }
+                    ]
+                },
+                vegetarian: {
+                    breakfast: [
+                        { name: 'Tofu Protein Scramble', calories: 400, protein: 25, details: 'Tofu scramble with vegetables, whole grain toast, and avocado' },
+                        { name: 'Protein Overnight Oats', calories: 450, protein: 20, details: 'Overnight oats with protein powder, chia seeds, and mixed berries' },
+                        { name: 'Egg White Breakfast Bowl', calories: 400, protein: 30, details: 'Egg whites, quinoa, vegetables, and feta cheese' },
+                        { name: 'Protein Smoothie Bowl', calories: 450, protein: 25, details: 'Plant-based protein powder, spinach, banana, and mixed berries' }
+                    ],
+                    lunch: [
+                        { name: 'Quinoa Buddha Bowl', calories: 550, protein: 25, details: 'Quinoa, chickpeas, roasted vegetables, and tahini dressing' },
+                        { name: 'Lentil Power Bowl', calories: 500, protein: 25, details: 'Lentils, brown rice, vegetables, and light dressing' },
+                        { name: 'Tofu Stir-Fry', calories: 500, protein: 25, details: 'Tofu, brown rice, mixed vegetables, and low-sodium sauce' },
+                        { name: 'Mediterranean Wrap', calories: 450, protein: 20, details: 'Whole grain wrap with hummus, vegetables, and feta' }
+                    ],
+                    dinner: [
+                        { name: 'Black Bean Enchiladas', calories: 500, protein: 25, details: 'Whole grain tortillas, black beans, vegetables, and light sauce' },
+                        { name: 'Lentil Curry', calories: 450, protein: 20, details: 'Lentils, brown rice, vegetables, and curry sauce' },
+                        { name: 'Tofu Stir-Fry', calories: 500, protein: 25, details: 'Tofu, brown rice, mixed vegetables, and light sauce' },
+                        { name: 'Mushroom Risotto', calories: 450, protein: 15, details: 'Brown rice, mushrooms, vegetables, and light cream sauce' }
+                    ],
+                    snacks: [
+                        { name: 'Protein Power Mix', calories: 200, protein: 10, details: 'Mixed nuts, dried fruit, and protein-rich seeds' },
+                        { name: 'Greek Yogurt Parfait', calories: 250, protein: 20, details: 'Greek yogurt with honey and mixed berries' },
+                        { name: 'Protein Bar', calories: 200, protein: 15, details: 'High-protein bar with natural ingredients' },
+                        { name: 'Apple Protein Combo', calories: 250, protein: 12, details: 'Apple with almond butter and protein powder' }
+                    ]
+                },
+                vegan: {
+                    breakfast: [
+                        { name: 'Tofu Protein Scramble', calories: 400, protein: 25, details: 'Tofu scramble with vegetables and whole grain toast' },
+                        { name: 'Protein Overnight Oats', calories: 450, protein: 20, details: 'Overnight oats with plant protein, chia seeds, and mixed berries' },
+                        { name: 'Tempeh Breakfast Bowl', calories: 400, protein: 25, details: 'Tempeh, quinoa, vegetables, and tahini dressing' },
+                        { name: 'Protein Smoothie Bowl', calories: 450, protein: 25, details: 'Plant-based protein powder, spinach, banana, and mixed berries' }
+                    ],
+                    lunch: [
+                        { name: 'Quinoa Buddha Bowl', calories: 550, protein: 25, details: 'Quinoa, chickpeas, roasted vegetables, and tahini dressing' },
+                        { name: 'Lentil Power Bowl', calories: 500, protein: 25, details: 'Lentils, brown rice, vegetables, and light dressing' },
+                        { name: 'Tempeh Stir-Fry', calories: 500, protein: 25, details: 'Tempeh, brown rice, mixed vegetables, and low-sodium sauce' },
+                        { name: 'Mediterranean Wrap', calories: 450, protein: 20, details: 'Whole grain wrap with hummus and vegetables' }
+                    ],
+                    dinner: [
+                        { name: 'Black Bean Enchiladas', calories: 500, protein: 25, details: 'Whole grain tortillas, black beans, vegetables, and light sauce' },
+                        { name: 'Lentil Curry', calories: 450, protein: 20, details: 'Lentils, brown rice, vegetables, and curry sauce' },
+                        { name: 'Tempeh Stir-Fry', calories: 500, protein: 25, details: 'Tempeh, brown rice, mixed vegetables, and light sauce' },
+                        { name: 'Mushroom Risotto', calories: 450, protein: 15, details: 'Brown rice, mushrooms, vegetables, and plant-based cream sauce' }
+                    ],
+                    snacks: [
+                        { name: 'Protein Power Mix', calories: 200, protein: 10, details: 'Mixed nuts, dried fruit, and protein-rich seeds' },
+                        { name: 'Plant-Based Yogurt Parfait', calories: 250, protein: 15, details: 'Plant-based yogurt with honey and mixed berries' },
+                        { name: 'Protein Bar', calories: 200, protein: 15, details: 'Plant-based protein bar with natural ingredients' },
+                        { name: 'Apple Protein Combo', calories: 250, protein: 12, details: 'Apple with almond butter and plant protein powder' }
+                    ]
+                }
+            };
+
+            let plan = '';
+            const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            
+            for (let day = 1; day <= 7; day++) {
+                const breakfast = meals[dietaryPreference].breakfast[Math.floor(Math.random() * meals[dietaryPreference].breakfast.length)];
+                const morningSnack = meals[dietaryPreference].snacks[Math.floor(Math.random() * meals[dietaryPreference].snacks.length)];
+                const lunch = meals[dietaryPreference].lunch[Math.floor(Math.random() * meals[dietaryPreference].lunch.length)];
+                const afternoonSnack = meals[dietaryPreference].snacks[Math.floor(Math.random() * meals[dietaryPreference].snacks.length)];
+                const dinner = meals[dietaryPreference].dinner[Math.floor(Math.random() * meals[dietaryPreference].dinner.length)];
+
+                const totalCalories = breakfast.calories + morningSnack.calories + lunch.calories + afternoonSnack.calories + dinner.calories;
+                const totalProtein = breakfast.protein + morningSnack.protein + lunch.protein + afternoonSnack.protein + dinner.protein;
+
+                plan += `
+                    <div class="day-meals">
+                        <h4>${days[day-1]}</h4>
+                        <div class="meal-type breakfast">Breakfast (${breakfast.calories} calories, ${breakfast.protein}g protein)</div>
+                        <p>${breakfast.name}</p>
+                        <p class="meal-details">${breakfast.details}</p>
+                        
+                        <div class="meal-type snack">Morning Snack (${morningSnack.calories} calories, ${morningSnack.protein}g protein)</div>
+                        <p>${morningSnack.name}</p>
+                        <p class="meal-details">${morningSnack.details}</p>
+                        
+                        <div class="meal-type lunch">Lunch (${lunch.calories} calories, ${lunch.protein}g protein)</div>
+                        <p>${lunch.name}</p>
+                        <p class="meal-details">${lunch.details}</p>
+                        
+                        <div class="meal-type snack">Afternoon Snack (${afternoonSnack.calories} calories, ${afternoonSnack.protein}g protein)</div>
+                        <p>${afternoonSnack.name}</p>
+                        <p class="meal-details">${afternoonSnack.details}</p>
+                        
+                        <div class="meal-type dinner">Dinner (${dinner.calories} calories, ${dinner.protein}g protein)</div>
+                        <p>${dinner.name}</p>
+                        <p class="meal-details">${dinner.details}</p>
+
+                        <div class="daily-totals">
+                            <p>Daily Total: ${totalCalories} calories, ${totalProtein}g protein</p>
+                            <p>Target: ${targetCalories} calories, ${proteinTarget}g protein</p>
+                        </div>
+                    </div>
+                `;
+            }
+            return plan;
+        }
+    </script>
+</body>
+</html> 
