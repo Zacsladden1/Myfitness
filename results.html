@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Planner - Results</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #2196F3;
+            --text-color: #333;
+            --background-color: #f5f5f5;
+            --card-background: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .results-card {
+            background: var(--card-background);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .metric {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .metric:last-child {
+            border-bottom: none;
+        }
+
+        .metric h3 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .metric p {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric .value {
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 0.5rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .hero {
+                padding: 3rem 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>Your Fitness Results</h1>
+        <p>Here's your personalized fitness assessment</p>
+    </div>
+
+    <div class="container">
+        <div class="results-card">
+            <div class="metric">
+                <h3>BMI (Body Mass Index)</h3>
+                <p>Your BMI: <span id="bmi" class="value">-</span></p>
+                <p id="bmiCategory" class="value">-</p>
+            </div>
+
+            <div class="metric">
+                <h3>BMR (Basal Metabolic Rate)</h3>
+                <p>Your BMR: <span id="bmr" class="value">-</span> calories/day</p>
+            </div>
+
+            <div class="metric">
+                <h3>TDEE (Total Daily Energy Expenditure)</h3>
+                <p>Your TDEE: <span id="tdee" class="value">-</span> calories/day</p>
+            </div>
+
+            <div class="metric">
+                <h3>Recommended Daily Calories</h3>
+                <p>Based on your goal: <span id="recommendedCalories" class="value">-</span> calories/day</p>
+            </div>
+
+            <div class="metric">
+                <h3>Recommended Daily Protein</h3>
+                <p>Based on your goal: <span id="recommendedProtein" class="value">-</span> grams/day</p>
+            </div>
+        </div>
+
+        <div class="button-container">
+            <a href="meal-plan.html" class="btn">
+                <i class="fas fa-utensils"></i>
+                View Meal Plan
+            </a>
+            <a href="workout-plan.html" class="btn">
+                <i class="fas fa-dumbbell"></i>
+                View Workout Plan
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Get data from localStorage
+        const fitnessData = JSON.parse(localStorage.getItem('fitnessData'));
+        
+        if (!fitnessData) {
+            window.location.href = 'fitness.html';
+        }
+
+        // Calculate BMI
+        const weight = parseFloat(fitnessData.weight);
+        const height = parseFloat(fitnessData.height) / 100; // Convert cm to m
+        const bmi = weight / (height * height);
+        document.getElementById('bmi').textContent = bmi.toFixed(1);
+
+        // BMI Category
+        let bmiCategory = '';
+        if (bmi < 18.5) bmiCategory = 'Underweight';
+        else if (bmi < 25) bmiCategory = 'Normal weight';
+        else if (bmi < 30) bmiCategory = 'Overweight';
+        else bmiCategory = 'Obese';
+        document.getElementById('bmiCategory').textContent = bmiCategory;
+
+        // Calculate BMR using Mifflin-St Jeor Equation
+        let bmr;
+        if (fitnessData.gender === 'male') {
+            bmr = (10 * weight) + (6.25 * height * 100) - (5 * fitnessData.age) + 5;
+        } else {
+            bmr = (10 * weight) + (6.25 * height * 100) - (5 * fitnessData.age) - 161;
+        }
+        document.getElementById('bmr').textContent = Math.round(bmr);
+
+        // Calculate TDEE based on activity level
+        const activityMultipliers = {
+            'sedentary': 1.2,
+            'light': 1.375,
+            'moderate': 1.55,
+            'very': 1.725,
+            'extra': 1.9
+        };
+        const tdee = bmr * activityMultipliers[fitnessData.activityLevel];
+        document.getElementById('tdee').textContent = Math.round(tdee);
+
+        // Calculate recommended calories based on goal
+        let recommendedCalories;
+        switch(fitnessData.fitnessGoal) {
+            case 'weight-loss':
+                recommendedCalories = tdee - 500;
+                break;
+            case 'muscle-gain':
+                recommendedCalories = tdee + 500;
+                break;
+            case 'maintenance':
+                recommendedCalories = tdee;
+                break;
+            case 'general-fitness':
+                recommendedCalories = tdee;
+                break;
+        }
+        document.getElementById('recommendedCalories').textContent = Math.round(recommendedCalories);
+
+        // Calculate recommended protein based on goal
+        let proteinMultiplier;
+        switch(fitnessData.fitnessGoal) {
+            case 'weight-loss':
+                proteinMultiplier = 1.6;
+                break;
+            case 'muscle-gain':
+                proteinMultiplier = 2.0;
+                break;
+            case 'maintenance':
+                proteinMultiplier = 1.2;
+                break;
+            case 'general-fitness':
+                proteinMultiplier = 1.4;
+                break;
+        }
+        const recommendedProtein = weight * proteinMultiplier;
+        document.getElementById('recommendedProtein').textContent = Math.round(recommendedProtein);
+    </script>
+</body>
+</html> 
