@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Planner - Meal Plan</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #1a237e;
+            --secondary-color: #3949ab;
+            --accent-color: #f50057;
+            --text-color: #2C3E50;
+            --text-light: #7F8C8D;
+            --background-color: #f5f5f5;
+            --card-background: #ffffff;
+            --border-color: #e0e0e0;
+            --success-color: #2e7d32;
+            --warning-color: #f57c00;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)),
+                        url('https://images.unsplash.com/photo-1517836357463-d25dfeac3438?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 5rem 2rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1" fill="rgba(255,255,255,0.05)"/></svg>');
+            opacity: 0.1;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            position: relative;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .user-stats {
+            background: var(--card-background);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .user-info {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .user-info h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.2rem;
+            background: var(--background-color);
+            border-radius: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-item i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 1.2rem 2.5rem;
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+
+        .meal-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .meal-card {
+            background: var(--card-background);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .meal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .meal-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .meal-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .meal-title {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .meal-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .meal-content {
+            padding: 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .meal-info {
+            margin-bottom: 1rem;
+        }
+
+        .meal-info h3 {
+            color: var(--primary-color);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .meal-info h3 i {
+            color: var(--secondary-color);
+        }
+
+        .ingredients-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .ingredient-item {
+            padding: 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .ingredient-item:hover {
+            border-color: var(--secondary-color);
+            background: rgba(57, 73, 171, 0.05);
+        }
+
+        .ingredient-name {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .meal-notes {
+            background: var(--background-color);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-top: 1.5rem;
+        }
+
+        .meal-notes h4 {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .meal-notes h4 i {
+            color: var(--secondary-color);
+        }
+
+        .meal-notes ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .meal-notes li {
+            margin-bottom: 0.8rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .meal-notes li::before {
+            content: '•';
+            color: var(--secondary-color);
+            position: absolute;
+            left: 0;
+        }
+
+        .calorie-info {
+            background: var(--background-color);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-top: 1.5rem;
+        }
+
+        .calorie-info h4 {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .calorie-info h4 i {
+            color: var(--secondary-color);
+        }
+
+        .calorie-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.8rem;
+        }
+
+        .calorie-item {
+            background: white;
+            padding: 0.8rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .calorie-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 0.3rem;
+        }
+
+        .calorie-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .hero {
+                padding: 2rem 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .stat-card {
+                padding: 1rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: none;
+                justify-content: center;
+            }
+
+            .meal-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .meal-card {
+                margin-bottom: 1.5rem;
+                padding: 1rem;
+            }
+
+            .meal-image {
+                height: 150px;
+            }
+
+            .meal-header {
+                padding: 0.8rem;
+            }
+
+            .meal-title {
+                font-size: 1.2rem;
+                line-height: 1.3;
+                margin-bottom: 0.5rem;
+            }
+
+            .meal-subtitle {
+                font-size: 0.9rem;
+                line-height: 1.4;
+            }
+
+            .meal-content {
+                padding: 0.8rem;
+            }
+
+            .ingredients-list {
+                padding: 0.8rem;
+                font-size: 0.9rem;
+                line-height: 1.4;
+            }
+
+            .ingredients-list li {
+                margin-bottom: 0.4rem;
+                padding: 0.4rem 0.8rem;
+            }
+
+            .nutrition-info {
+                padding: 0.8rem;
+            }
+
+            .nutrition-info h4 {
+                font-size: 0.95rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .nutrition-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.5rem;
+            }
+
+            .nutrition-item {
+                padding: 0.5rem;
+            }
+
+            .nutrition-value {
+                font-size: 0.9rem;
+                line-height: 1.2;
+            }
+
+            .nutrition-label {
+                font-size: 0.8rem;
+                line-height: 1.2;
+            }
+
+            /* Improve text wrapping for long content */
+            .meal-title,
+            .meal-subtitle,
+            .ingredients-list li,
+            .nutrition-value,
+            .nutrition-label {
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+            }
+
+            /* Adjust spacing for better readability */
+            .meal-card > * {
+                margin-bottom: 0.8rem;
+            }
+
+            .meal-card > *:last-child {
+                margin-bottom: 0;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .container {
+                padding: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .meal-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .meal-image {
+                height: 180px;
+            }
+
+            .meal-title {
+                font-size: 1.5rem;
+            }
+
+            .meal-subtitle {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .hero p {
+                font-size: 0.9rem;
+            }
+
+            .stat-card i {
+                font-size: 1.2rem;
+            }
+
+            .stat-value {
+                font-size: 1rem;
+            }
+
+            .stat-label {
+                font-size: 0.8rem;
+            }
+
+            .meal-card {
+                padding: 0.8rem;
+            }
+
+            .meal-image {
+                height: 120px;
+            }
+
+            .meal-title {
+                font-size: 1.1rem;
+            }
+
+            .meal-subtitle {
+                font-size: 0.85rem;
+            }
+
+            .ingredients-list {
+                padding: 0.6rem;
+                font-size: 0.85rem;
+            }
+
+            .ingredients-list li {
+                padding: 0.3rem 0.6rem;
+            }
+
+            .nutrition-info {
+                padding: 0.6rem;
+            }
+
+            .nutrition-info h4 {
+                font-size: 0.9rem;
+            }
+
+            .nutrition-value {
+                font-size: 0.85rem;
+            }
+
+            .nutrition-label {
+                font-size: 0.75rem;
+            }
+
+            /* Further adjust spacing for very small screens */
+            .meal-card > * {
+                margin-bottom: 0.6rem;
+            }
+        }
+
+        /* Add touch-friendly styles for mobile */
+        @media (hover: none) {
+            .btn:active,
+            .meal-card:active {
+                transform: scale(0.98);
+            }
+
+            .nutrition-item:active {
+                background: rgba(57, 73, 171, 0.1);
+            }
+        }
+
+        /* Optimize for tablets in landscape */
+        @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .meal-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .meal-image {
+                height: 160px;
+            }
+        }
+
+        /* Add support for high-DPI screens */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .meal-image {
+                image-rendering: -webkit-optimize-contrast;
+            }
+        }
+
+        /* Add support for dark mode */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background-color: #1a1a1a;
+                --card-background: #2d2d2d;
+                --text-color: #ffffff;
+                --text-light: #b0b0b0;
+                --border-color: #404040;
+            }
+
+            .meal-card {
+                background: var(--card-background);
+            }
+
+            .ingredients-list {
+                background: var(--background-color);
+            }
+
+            .nutrition-info {
+                background: var(--background-color);
+            }
+        }
+
+        /* Add support for reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        /* Add support for larger text */
+        @media (prefers-reduced-motion: no-preference) {
+            :root {
+                --font-size-base: 16px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            :root {
+                --font-size-base: 18px;
+            }
+        }
+
+        /* Add support for larger touch targets */
+        @media (pointer: coarse) {
+            .btn,
+            .nutrition-item {
+                min-height: 44px;
+                min-width: 44px;
+            }
+        }
+
+        @media print {
+            .action-buttons {
+                display: none;
+            }
+
+            .meal-grid {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                margin-top: 1rem;
+            }
+
+            .meal-card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                margin-bottom: 1rem;
+                border: 1px solid #ddd;
+                box-shadow: none !important;
+            }
+
+            .meal-image {
+                height: 100px !important;
+                object-fit: cover;
+            }
+
+            .meal-header {
+                background: #f8f8f8 !important;
+                color: #333 !important;
+                border-bottom: 2px solid var(--success-color);
+                padding: 0.5rem !important;
+            }
+
+            .meal-title {
+                color: var(--success-color) !important;
+                font-size: 1.1rem !important;
+                margin-bottom: 0.2rem !important;
+            }
+
+            .meal-subtitle {
+                color: #666 !important;
+                font-size: 0.8rem !important;
+            }
+
+            .meal-content {
+                padding: 0.8rem !important;
+            }
+
+            .meal-info h3,
+            .meal-notes h4 {
+                color: var(--primary-color) !important;
+                border-bottom: 1px solid var(--primary-color);
+                padding-bottom: 0.2rem;
+                font-size: 1rem !important;
+                margin-bottom: 0.3rem !important;
+            }
+
+            .ingredients-list {
+                grid-template-columns: 1fr;
+                gap: 0.3rem;
+            }
+
+            .ingredient-item {
+                padding: 0.3rem !important;
+                margin-bottom: 0.3rem !important;
+                font-size: 0.8rem !important;
+            }
+
+            .calorie-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 0.3rem;
+            }
+
+            .calorie-item {
+                padding: 0.3rem !important;
+            }
+
+            .calorie-value {
+                font-size: 0.9rem !important;
+            }
+
+            .calorie-label {
+                font-size: 0.7rem !important;
+            }
+
+            .meal-notes ul li {
+                margin-bottom: 0.2rem !important;
+                font-size: 0.8rem !important;
+            }
+
+            .pdf-header {
+                margin-bottom: 1rem !important;
+                padding-bottom: 0.5rem !important;
+            }
+
+            .pdf-header h1 {
+                font-size: 1.5rem !important;
+                margin-bottom: 0.2rem !important;
+            }
+
+            .pdf-header p {
+                font-size: 0.9rem !important;
+            }
+
+            .user-info {
+                font-size: 0.8rem !important;
+                margin-top: 0.3rem !important;
+            }
+
+            .user-info p {
+                margin-bottom: 0.2rem !important;
+            }
+
+            .pdf-footer {
+                margin-top: 1rem !important;
+                padding-top: 0.5rem !important;
+                font-size: 0.7rem !important;
+            }
+        }
+
+        .pdf-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .pdf-header h1 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .pdf-header p {
+            color: var(--secondary-color);
+            font-size: 1.1rem;
+        }
+
+        .pdf-footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 2px solid var(--primary-color);
+            font-size: 0.9rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>Your Meal Plan</h1>
+        <p>Balanced nutrition for your fitness goals</p>
+    </div>
+
+    <div class="container">
+        <div class="user-stats">
+            <div class="user-info">
+                <h2>Hello, <span id="userName">User</span>!</h2>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <i class="fas fa-birthday-cake"></i>
+                        <div class="stat-label">Age</div>
+                        <div class="stat-value" id="userAge">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-weight"></i>
+                        <div class="stat-label">Current Weight</div>
+                        <div class="stat-value" id="userWeight">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-bullseye"></i>
+                        <div class="stat-label">Goal Weight</div>
+                        <div class="stat-value" id="userGoalWeight">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-fire"></i>
+                        <div class="stat-label">Daily Calories</div>
+                        <div class="stat-value" id="userCalories">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-leaf"></i>
+                        <div class="stat-label">Dietary Preference</div>
+                        <div class="stat-value" id="userDiet">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-clock"></i>
+                        <div class="stat-label">Time to Goal</div>
+                        <div class="stat-value" id="userTimeToGoal">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <a href="fitness.html" class="btn">
+                <i class="fas fa-arrow-left"></i>
+                Back to Assessment
+            </a>
+            <button class="btn" onclick="generatePDF()">
+                <i class="fas fa-file-pdf"></i>
+                Save as PDF
+            </button>
+            <a href="workout.html" class="btn">
+                <i class="fas fa-dumbbell"></i>
+                View Workout Plan
+            </a>
+            <a href="index.html" class="btn">
+                <i class="fas fa-home"></i>
+                Home
+            </a>
+        </div>
+
+        <div id="mealPlanContent">
+            <div class="meal-grid" id="mealGrid">
+                <!-- Meals will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Meal database
+        const meals = {
+            breakfast: {
+                name: "Healthy Breakfast Bowl",
+                subtitle: "Start your day with energy",
+                image: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                ingredients: [
+                    "Oatmeal (1 cup)",
+                    "Banana (1 medium)",
+                    "Almonds (1/4 cup)",
+                    "Honey (1 tbsp)",
+                    "Chia seeds (1 tbsp)",
+                    "Cinnamon (1/4 tsp)"
+                ],
+                calories: 450,
+                macros: {
+                    protein: 15,
+                    carbs: 65,
+                    fat: 20
+                }
+            },
+            lunch: {
+                name: "Protein-Rich Lunch Bowl",
+                subtitle: "Balanced midday meal",
+                image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                ingredients: [
+                    "Quinoa (1 cup)",
+                    "Grilled chicken breast (150g)",
+                    "Mixed vegetables (2 cups)",
+                    "Olive oil (1 tbsp)",
+                    "Lemon juice (1 tbsp)",
+                    "Herbs and spices"
+                ],
+                calories: 550,
+                macros: {
+                    protein: 35,
+                    carbs: 45,
+                    fat: 25
+                }
+            },
+            dinner: {
+                name: "Light Dinner Plate",
+                subtitle: "Nutritious evening meal",
+                image: "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                ingredients: [
+                    "Salmon fillet (150g)",
+                    "Brown rice (1 cup)",
+                    "Steamed vegetables (2 cups)",
+                    "Olive oil (1 tbsp)",
+                    "Garlic (2 cloves)",
+                    "Fresh herbs"
+                ],
+                calories: 500,
+                macros: {
+                    protein: 30,
+                    carbs: 40,
+                    fat: 25
+                }
+            },
+            snacks: {
+                name: "Healthy Snacks",
+                subtitle: "Energy-boosting options",
+                image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                ingredients: [
+                    "Mixed nuts (1/4 cup)",
+                    "Greek yogurt (1 cup)",
+                    "Fresh fruit (1 piece)",
+                    "Protein bar (1 bar)",
+                    "Vegetable sticks (1 cup)",
+                    "Hummus (2 tbsp)"
+                ],
+                calories: 300,
+                macros: {
+                    protein: 15,
+                    carbs: 35,
+                    fat: 15
+                }
+            }
+        };
+
+        // Initialize meal plan
+        function initializeMealPlan() {
+            const userData = JSON.parse(localStorage.getItem('fitnessData'));
+            if (!userData) {
+                window.location.href = 'fitness.html';
+                return;
+            }
+
+            // Update user stats display with stored values
+            document.getElementById('userName').textContent = userData.name;
+            document.getElementById('userAge').textContent = `${userData.age} years`;
+            document.getElementById('userWeight').textContent = `${userData.weight} kg`;
+            document.getElementById('userGoalWeight').textContent = `${userData.goalWeight} kg`;
+            document.getElementById('userCalories').textContent = `${userData.targetCalories} calories`;
+            document.getElementById('userDiet').textContent = userData.dietaryPreference.charAt(0).toUpperCase() + userData.dietaryPreference.slice(1);
+            document.getElementById('userTimeToGoal').textContent = userData.timeToGoal;
+
+            displayMeals();
+        }
+
+        // Create meal card HTML
+        function createMealCard(mealType, meal) {
+            const userData = JSON.parse(localStorage.getItem('fitnessData'));
+            const dailyCalories = userData.targetCalories;
+            const caloriePercentage = Math.round((meal.calories / dailyCalories) * 100);
+
+            return `
+                <div class="meal-card">
+                    <img src="${meal.image}" alt="${meal.name}" class="meal-image" onerror="this.src='https://images.unsplash.com/photo-1517838277536-f5f99be501cd?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'">
+                    <div class="meal-header">
+                        <h3 class="meal-title">${meal.name}</h3>
+                        <div class="meal-subtitle">${meal.subtitle}</div>
+                    </div>
+                    <div class="meal-content">
+                        <div class="meal-info">
+                            <h3><i class="fas fa-list"></i> Ingredients</h3>
+                            <ul class="ingredients-list">
+                                ${meal.ingredients.map(ingredient => `
+                                    <li class="ingredient-item">
+                                        <div class="ingredient-name">${ingredient}</div>
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                        <div class="calorie-info">
+                            <h4><i class="fas fa-fire"></i> Nutritional Information</h4>
+                            <div class="calorie-grid">
+                                <div class="calorie-item">
+                                    <div class="calorie-value">${meal.calories}</div>
+                                    <div class="calorie-label">Calories</div>
+                                    <div class="calorie-label">(${caloriePercentage}% of daily)</div>
+                                </div>
+                                <div class="calorie-item">
+                                    <div class="calorie-value">${meal.macros.protein}g</div>
+                                    <div class="calorie-label">Protein</div>
+                                </div>
+                                <div class="calorie-item">
+                                    <div class="calorie-value">${meal.macros.carbs}g</div>
+                                    <div class="calorie-label">Carbs</div>
+                                </div>
+                                <div class="calorie-item">
+                                    <div class="calorie-value">${meal.macros.fat}g</div>
+                                    <div class="calorie-label">Fat</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="meal-notes">
+                            <h4><i class="fas fa-info-circle"></i> Notes</h4>
+                            <ul>
+                                <li>Adjust portions based on your daily calorie needs</li>
+                                <li>Stay hydrated throughout the day</li>
+                                <li>Consider meal prepping for convenience</li>
+                                <li>Listen to your body's hunger cues</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Display meals
+        function displayMeals() {
+            const mealGrid = document.getElementById('mealGrid');
+            mealGrid.innerHTML = '';
+
+            Object.entries(meals).forEach(([type, meal]) => {
+                mealGrid.innerHTML += createMealCard(type, meal);
+            });
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', initializeMealPlan);
+
+        // Generate PDF
+        function generatePDF() {
+            const userData = JSON.parse(localStorage.getItem('fitnessData'));
+            
+            // Create a new div for PDF content
+            const pdfContent = document.createElement('div');
+            pdfContent.style.padding = '20px';
+            
+            // Add header
+            pdfContent.innerHTML = `
+                <h1 style="text-align: center; color: #1a237e; margin-bottom: 20px;">Personalized Meal Plan</h1>
+                <div style="margin-bottom: 20px;">
+                    <h2 style="color: #3949ab; margin-bottom: 10px;">User Information</h2>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Name:</strong></td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${userData.name}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Age:</strong></td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${userData.age} years</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Current Weight:</strong></td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${userData.weight} kg</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Goal Weight:</strong></td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${userData.goalWeight} kg</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Daily Calorie Target:</strong></td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${userData.targetCalories} calories</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Dietary Preference:</strong></td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${userData.dietaryPreference.charAt(0).toUpperCase() + userData.dietaryPreference.slice(1)}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Time to Goal:</strong></td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${userData.timeToGoal}</td>
+                        </tr>
+                    </table>
+                </div>
+            `;
+
+            // Add meals table
+            pdfContent.innerHTML += `
+                <h2 style="color: #3949ab; margin-bottom: 10px;">Daily Meal Plan</h2>
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                    <thead>
+                        <tr style="background-color: #f5f5f5;">
+                            <th style="padding: 10px; border: 1px solid #ddd;">Meal</th>
+                            <th style="padding: 10px; border: 1px solid #ddd;">Calories</th>
+                            <th style="padding: 10px; border: 1px solid #ddd;">Protein</th>
+                            <th style="padding: 10px; border: 1px solid #ddd;">Carbs</th>
+                            <th style="padding: 10px; border: 1px solid #ddd;">Fat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            // Add each meal to the table
+            Object.entries(meals).forEach(([type, meal]) => {
+                const caloriePercentage = Math.round((meal.calories / userData.targetCalories) * 100);
+                pdfContent.innerHTML += `
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd;">
+                            <strong>${meal.name}</strong><br>
+                            <small>${meal.subtitle}</small>
+                        </td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">
+                            ${meal.calories} (${caloriePercentage}%)
+                        </td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">${meal.macros.protein}g</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">${meal.macros.carbs}g</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">${meal.macros.fat}g</td>
+                    </tr>
+                `;
+            });
+
+            pdfContent.innerHTML += `
+                    </tbody>
+                </table>
+                <h2 style="color: #3949ab; margin-bottom: 10px;">Ingredients</h2>
+            `;
+
+            // Add ingredients table
+            Object.entries(meals).forEach(([type, meal]) => {
+                pdfContent.innerHTML += `
+                    <h3 style="color: #1a237e; margin: 15px 0 10px;">${meal.name}</h3>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                        <tbody>
+                `;
+                meal.ingredients.forEach(ingredient => {
+                    pdfContent.innerHTML += `
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${ingredient}</td>
+                        </tr>
+                    `;
+                });
+                pdfContent.innerHTML += `
+                        </tbody>
+                    </table>
+                `;
+            });
+
+            // Add footer
+            pdfContent.innerHTML += `
+                <div style="margin-top: 30px; text-align: center; font-size: 12px; color: #666;">
+                    <p>Generated on: ${new Date().toLocaleDateString()}</p>
+                    <p style="font-style: italic;">Disclaimer: This meal plan is for informational purposes only. Consult with a healthcare professional before starting any diet program.</p>
+                </div>
+            `;
+
+            const opt = {
+                margin: [0.5, 0.5, 0.5, 0.5],
+                filename: 'meal-plan.pdf',
+                jsPDF: { 
+                    unit: 'in', 
+                    format: 'a4', 
+                    orientation: 'portrait',
+                    compress: true,
+                    precision: 2
+                }
+            };
+
+            html2pdf().set(opt).from(pdfContent).save();
+        }
+    </script>
+</body>
+</html> 

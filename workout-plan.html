@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workout Plans - Fitness Planner</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #1a237e;
+            --secondary-color: #3949ab;
+            --accent-color: #f50057;
+            --text-color: #2C3E50;
+            --text-light: #7F8C8D;
+            --background-color: #f5f5f5;
+            --card-background: #ffffff;
+            --border-color: #e0e0e0;
+            --success-color: #2e7d32;
+            --warning-color: #f57c00;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .workout-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: var(--card-background);
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .workout-variation-selector {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .variation-btn {
+            padding: 1rem 2rem;
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            background: transparent;
+            color: var(--primary-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .variation-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .workout-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 1200px) {
+            .workout-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .workout-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .workout-card {
+            background: var(--card-background);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .workout-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .workout-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .workout-card h3 i {
+            color: var(--accent-color);
+        }
+
+        .workout-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .workout-info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-light);
+        }
+
+        .workout-info-item i {
+            color: var(--primary-color);
+        }
+
+        .exercise-list {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .exercise-list h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .exercise-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .exercise-list li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .exercise-list li::before {
+            content: '•';
+            color: var(--accent-color);
+            position: absolute;
+            left: 0;
+        }
+
+        .difficulty-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+
+        .difficulty-badge.beginner {
+            background: rgba(46, 125, 50, 0.1);
+            color: var(--success-color);
+        }
+
+        .difficulty-badge.intermediate {
+            background: rgba(245, 124, 0, 0.1);
+            color: var(--warning-color);
+        }
+
+        .difficulty-badge.advanced {
+            background: rgba(244, 67, 54, 0.1);
+            color: var(--accent-color);
+        }
+
+        .workout-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .workout-header i {
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        .workout-header h1 {
+            margin: 0;
+            color: white;
+            font-size: 2.5rem;
+        }
+
+        .workout-day-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .workout-day {
+            background: var(--card-background);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .workout-day:hover {
+            transform: translateY(-5px);
+        }
+
+        .day-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .day-content {
+            padding: 1.5rem;
+        }
+
+        .workout-type {
+            display: inline-block;
+            background: rgba(57, 73, 171, 0.1);
+            color: var(--primary-color);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            margin-left: 0.5rem;
+        }
+
+        .workout-exercises {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .workout-exercises li {
+            padding: 0.8rem 0;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .workout-exercises li:last-child {
+            border-bottom: none;
+        }
+
+        .view-workout-btn {
+            width: 100%;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: relative;
+            background: var(--card-background);
+            margin: 5% auto;
+            padding: 2rem;
+            width: 90%;
+            max-width: 800px;
+            border-radius: 10px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 1.5rem;
+            top: 1.5rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        .exercise-detail {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .exercise-detail:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .exercise-detail h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .exercise-tip {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: rgba(57, 73, 171, 0.1);
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .workout-controls {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .workout-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .workout-day-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                margin: 10% auto;
+                width: 95%;
+            }
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background-color: #121212;
+                --card-background: #1e1e1e;
+                --text-color: #ffffff;
+                --text-light: #b0b0b0;
+                --border-color: #2d2d2d;
+            }
+
+            .workout-card,
+            .workout-day {
+                background: var(--card-background);
+            }
+
+            .exercise-item:hover {
+                background-color: rgba(57, 73, 171, 0.2);
+            }
+
+            .workout-type {
+                background: rgba(57, 73, 171, 0.2);
+            }
+        }
+
+        .card {
+            background: var(--card-background);
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .card-header i {
+            font-size: 1.5rem;
+        }
+
+        .card-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .workout-schedule-selector {
+            margin-top: 1.5rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab-btn {
+            padding: 0.8rem 2rem;
+            border: 2px solid var(--primary-color);
+            border-radius: 5px;
+            background: transparent;
+            color: var(--primary-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .tab-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .workout-week {
+            display: none;
+        }
+
+        .workout-week.active {
+            display: block;
+        }
+
+        .workout-day-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .workout-day {
+            background: var(--card-background);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .workout-day:hover {
+            transform: translateY(-5px);
+        }
+
+        .day-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .day-content {
+            padding: 1.5rem;
+        }
+
+        .workout-type {
+            display: inline-block;
+            background: rgba(57, 73, 171, 0.1);
+            color: var(--primary-color);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            margin-left: 0.5rem;
+        }
+
+        .workout-exercises {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .workout-exercises li {
+            padding: 0.8rem 0;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .workout-exercises li:last-child {
+            border-bottom: none;
+        }
+
+        .view-workout-btn {
+            width: 100%;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .workout-day-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab-btn {
+                width: 100%;
+            }
+        }
+
+        /* Workout Plan Styles */
+        .workout-plan-container {
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .workout-plan-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .workout-plan-info {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .workout-plan-info p {
+            font-size: 1.1em;
+            margin: 10px 0;
+            color: var(--text-color);
+        }
+
+        .workout-plan-selector {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .workout-plan-selector button {
+            padding: 12px 24px;
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            background-color: transparent;
+            color: var(--primary-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 1em;
+        }
+
+        .workout-plan-selector button:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .workout-plan-selector button.active {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .workout-plan-week {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .workout-plan-day {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .workout-plan-day:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .day-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .day-header h3 {
+            margin: 0;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        .exercises {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .exercise {
+            background-color: var(--bg-color);
+            padding: 20px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+
+        .exercise:hover {
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .exercise h4 {
+            color: var(--primary-color);
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .exercise-description {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(26, 35, 126, 0.05);
+            border-radius: 6px;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        /* Add a section for workout stats */
+        .workout-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--card-background);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card h3 {
+            margin: 0.5rem 0;
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        .stat-card p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .workout-plan-week {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .workout-plan-week {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Dark Mode Support */
+        @media (prefers-color-scheme: dark) {
+            .workout-plan-day,
+            .workout-plan-header,
+            .stat-card {
+                background-color: var(--card-bg-dark);
+            }
+
+            .exercise {
+                background-color: var(--bg-color-dark);
+            }
+        }
+
+        .workout-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .workout-type-selector {
+            display: flex;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+            justify-content: center;
+        }
+
+        .workout-type-btn {
+            padding: 0.8rem 1.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--card-background);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.95rem;
+        }
+
+        .workout-type-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .week-selector {
+            display: flex;
+            justify-content: center;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .week-btn {
+            padding: 0.8rem 1.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--card-background);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .week-btn.active {
+            background: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+        }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .tip-item {
+            background: var(--card-background);
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            height: 100%;
+        }
+
+        .workout-label {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .tip-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .tip-item i {
+            color: var(--accent-color);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tip-item h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .tip-item p {
+            color: var(--text-color);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            .tips-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Dark mode support for tips */
+        @media (prefers-color-scheme: dark) {
+            .tip-item {
+                background: var(--card-background);
+            }
+        }
+
+        .daily-tip-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .daily-tip-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .daily-tip-header i {
+            font-size: 2rem;
+        }
+
+        .daily-tip-header h3 {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        .daily-tip-content {
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .daily-tip-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="navbar-logo">
+                <i class="fas fa-heartbeat"></i> Fitness Planner
+            </a>
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle" style="display: block;">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="navbar-menu" id="navbar-menu">
+                <li><a href="fitness.html">Assessment</a></li>
+                <li><a href="results.html">Results</a></li>
+                <li><a href="workout-plan.html" class="active">Workouts</a></li>
+                <li><a href="meal-plan.html">Meal Plans</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero section -->
+    <div class="hero">
+        <div class="workout-header">
+            <i class="fas fa-dumbbell"></i>
+            <h1>Your Personalized Workout Plan</h1>
+        </div>
+        <p>Loading your workout plan based on your fitness goals and experience level</p>
+    </div>
+
+    <!-- Main content -->
+    <div class="container">
+        <!-- Daily Tip Section -->
+        <div class="daily-tip-card">
+            <div class="daily-tip-header">
+                <i class="fas fa-bolt"></i>
+                <h3>Daily Fitness Tip</h3>
+            </div>
+            <div class="daily-tip-content" id="daily-tip-text">
+                Loading your daily fitness tip...
+            </div>
+            <div class="daily-tip-footer">
+                <span id="tip-date">Today</span>
+                <button id="new-tip-btn" class="btn">New Tip</button>
+            </div>
+        </div>
+
+        <div class="workout-controls">
+            <div class="workout-variation-selector">
+                <button class="variation-btn active" data-variation="A">Week A</button>
+                <button class="variation-btn" data-variation="B">Week B</button>
+            </div>
+        </div>
+
+        <div class="workout-grid">
+            <!-- Push Workout -->
+            <div class="workout-card">
+                <div class="card-header">
+                    <i class="fas fa-dumbbell"></i>
+                    <h2>Push</h2>
+                </div>
+                <div class="card-body">
+                    <div class="workout-label">Push Workout</div>
+                    <div class="workout-variation-A">
+                        <ul class="workout-exercises">
+                            <li>Bench Press: 4 sets x 8 reps</li>
+                            <li>Overhead Press: 4 sets x 8 reps</li>
+                            <li>Incline Dumbbell Press: 3 sets x 10 reps</li>
+                            <li>Lateral Raises: 4 sets x 12 reps</li>
+                            <li>Tricep Pushdowns: 3 sets x 12 reps</li>
+                        </ul>
+                    </div>
+                    <div class="workout-variation-B" style="display: none;">
+                        <ul class="workout-exercises">
+                            <li>Overhead Press: 4 sets x 8 reps</li>
+                            <li>Incline Bench Press: 4 sets x 8 reps</li>
+                            <li>Dumbbell Shoulder Press: 3 sets x 10 reps</li>
+                            <li>Front Raises: 4 sets x 12 reps</li>
+                            <li>Tricep Extensions: 3 sets x 12 reps</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pull Workout -->
+            <div class="workout-card">
+                <div class="card-header">
+                    <i class="fas fa-dumbbell"></i>
+                    <h2>Pull</h2>
+                </div>
+                <div class="card-body">
+                    <div class="workout-label">Pull Workout</div>
+                    <div class="workout-variation-A">
+                        <ul class="workout-exercises">
+                            <li>Barbell Rows: 4 sets x 8 reps</li>
+                            <li>Pull-ups: 4 sets x 8 reps</li>
+                            <li>Face Pulls: 3 sets x 12 reps</li>
+                            <li>Bicep Curls: 3 sets x 12 reps</li>
+                            <li>Hammer Curls: 3 sets x 12 reps</li>
+                        </ul>
+                    </div>
+                    <div class="workout-variation-B" style="display: none;">
+                        <ul class="workout-exercises">
+                            <li>Deadlifts: 4 sets x 6 reps</li>
+                            <li>Lat Pulldowns: 4 sets x 10 reps</li>
+                            <li>Seated Rows: 3 sets x 12 reps</li>
+                            <li>Preacher Curls: 3 sets x 12 reps</li>
+                            <li>Reverse Flyes: 3 sets x 12 reps</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Legs Workout -->
+            <div class="workout-card">
+                <div class="card-header">
+                    <i class="fas fa-dumbbell"></i>
+                    <h2>Legs</h2>
+                </div>
+                <div class="card-body">
+                    <div class="workout-label">Legs Workout</div>
+                    <div class="workout-variation-A">
+                        <ul class="workout-exercises">
+                            <li>Squats: 4 sets x 8 reps</li>
+                            <li>Romanian Deadlifts: 4 sets x 8 reps</li>
+                            <li>Leg Press: 3 sets x 10 reps</li>
+                            <li>Leg Extensions: 3 sets x 12 reps</li>
+                            <li>Calf Raises: 4 sets x 15 reps</li>
+                        </ul>
+                    </div>
+                    <div class="workout-variation-B" style="display: none;">
+                        <ul class="workout-exercises">
+                            <li>Front Squats: 4 sets x 8 reps</li>
+                            <li>Bulgarian Split Squats: 3 sets x 10 reps each</li>
+                            <li>Hip Thrusts: 4 sets x 10 reps</li>
+                            <li>Leg Curls: 3 sets x 12 reps</li>
+                            <li>Standing Calf Raises: 4 sets x 15 reps</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Workout Tips Section -->
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-lightbulb"></i>
+                <h2>Workout Tips</h2>
+            </div>
+            <div class="card-body">
+                <div class="tips-grid">
+                    <div class="tip-item">
+                        <i class="fas fa-check-circle"></i>
+                        <h4>Warm Up Properly</h4>
+                        <p>Always start with a 5-10 minute warm-up to prevent injury and prepare your body for exercise.</p>
+                    </div>
+                    <div class="tip-item">
+                        <i class="fas fa-check-circle"></i>
+                        <h4>Stay Hydrated</h4>
+                        <p>Drink water before, during, and after your workout to maintain optimal performance.</p>
+                    </div>
+                    <div class="tip-item">
+                        <i class="fas fa-check-circle"></i>
+                        <h4>Proper Form</h4>
+                        <p>Focus on maintaining correct form rather than lifting heavier weights to prevent injury.</p>
+                    </div>
+                </div>
+                <div class="tips-grid" style="margin-top: 1.5rem;">
+                    <div class="tip-item">
+                        <i class="fas fa-check-circle"></i>
+                        <h4>Rest Between Sets</h4>
+                        <p>Take appropriate rest periods (60-90 seconds) between sets to allow muscle recovery.</p>
+                    </div>
+                    <div class="tip-item">
+                        <i class="fas fa-check-circle"></i>
+                        <h4>Progressive Overload</h4>
+                        <p>Gradually increase weight or reps over time to continue making progress.</p>
+                    </div>
+                    <div class="tip-item">
+                        <i class="fas fa-check-circle"></i>
+                        <h4>Cool Down</h4>
+                        <p>End your workout with a 5-10 minute cool-down to help your body recover.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Fitness Planner</h3>
+                <ul>
+                    <li><a href="fitness.html">Assessment</a></li>
+                    <li><a href="results.html">Results</a></li>
+                    <li><a href="workout-plan.html">Workouts</a></li>
+                    <li><a href="meal-plan.html">Meal Plans</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="#">Fitness Blog</a></li>
+                    <li><a href="#">Nutrition Guide</a></li>
+                    <li><a href="#">Exercise Library</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Contact</h3>
+                <ul>
+                    <li><a href="#">Support</a></li>
+                    <li><a href="#">Feedback</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 Fitness Planner. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get user's fitness data
+            const fitnessData = JSON.parse(localStorage.getItem('fitnessResults'));
+            if (!fitnessData) {
+                window.location.href = 'fitness.html';
+                return;
+            }
+
+            // Define workout data - Gym workouts
+            const gymWorkouts = {
+                push: {
+                    A: [
+                        "Bench Press: 4 sets x 8 reps",
+                        "Overhead Press: 4 sets x 8 reps",
+                        "Incline Dumbbell Press: 3 sets x 10 reps",
+                        "Lateral Raises: 4 sets x 12 reps",
+                        "Tricep Pushdowns: 3 sets x 12 reps"
+                    ],
+                    B: [
+                        "Overhead Press: 4 sets x 8 reps",
+                        "Incline Bench Press: 4 sets x 8 reps",
+                        "Dumbbell Shoulder Press: 3 sets x 10 reps",
+                        "Front Raises: 4 sets x 12 reps",
+                        "Tricep Extensions: 3 sets x 12 reps"
+                    ]
+                },
+                pull: {
+                    A: [
+                        "Barbell Rows: 4 sets x 8 reps",
+                        "Pull-ups: 4 sets x 8 reps",
+                        "Face Pulls: 3 sets x 12 reps",
+                        "Bicep Curls: 3 sets x 12 reps",
+                        "Hammer Curls: 3 sets x 12 reps"
+                    ],
+                    B: [
+                        "Deadlifts: 4 sets x 6 reps",
+                        "Lat Pulldowns: 4 sets x 10 reps",
+                        "Seated Rows: 3 sets x 12 reps",
+                        "Preacher Curls: 3 sets x 12 reps",
+                        "Reverse Flyes: 3 sets x 12 reps"
+                    ]
+                },
+                legs: {
+                    A: [
+                        "Squats: 4 sets x 8 reps",
+                        "Romanian Deadlifts: 4 sets x 8 reps",
+                        "Leg Press: 3 sets x 10 reps",
+                        "Leg Extensions: 3 sets x 12 reps",
+                        "Calf Raises: 4 sets x 15 reps"
+                    ],
+                    B: [
+                        "Front Squats: 4 sets x 8 reps",
+                        "Bulgarian Split Squats: 3 sets x 10 reps each",
+                        "Hip Thrusts: 4 sets x 10 reps",
+                        "Leg Curls: 3 sets x 12 reps",
+                        "Standing Calf Raises: 4 sets x 15 reps"
+                    ]
+                }
+            };
+
+            // Define home workouts
+            const homeWorkouts = {
+                push: {
+                    A: [
+                        "Push-ups: 4 sets x 10-15 reps",
+                        "Pike Push-ups: 4 sets x 8-12 reps",
+                        "Incline Push-ups: 3 sets x 12-15 reps",
+                        "Diamond Push-ups: 3 sets x 8-12 reps",
+                        "Dips (using chairs): 3 sets x 8-12 reps"
+                    ],
+                    B: [
+                        "Decline Push-ups: 4 sets x 10-15 reps",
+                        "Wall Handstand Hold: 3 sets x 30 seconds",
+                        "Chest Dips: 4 sets x 8-12 reps",
+                        "Tricep Extensions (with water bottle/band): 3 sets x 12-15 reps",
+                        "Shoulder Taps: 3 sets x 10 each side"
+                    ]
+                },
+                pull: {
+                    A: [
+                        "Doorway Rows: 4 sets x 10-12 reps",
+                        "Resistance Band Rows: 4 sets x 12-15 reps",
+                        "Superman Holds: 3 sets x 30 seconds",
+                        "Bicep Curls (with water bottles/cans): 3 sets x 12-15 reps",
+                        "Resistance Band Pull-aparts: 3 sets x 15-20 reps"
+                    ],
+                    B: [
+                        "Inverted Rows (under table): 4 sets x 8-12 reps",
+                        "Resistance Band Pulldowns: 4 sets x 12-15 reps",
+                        "Reverse Snow Angels: 3 sets x 12-15 reps",
+                        "Hammer Curls (with water bottles): 3 sets x 12-15 reps",
+                        "Prone Y-T-I Raises: 3 sets x 10 each position"
+                    ]
+                },
+                legs: {
+                    A: [
+                        "Bodyweight Squats: 4 sets x 15-20 reps",
+                        "Walking Lunges: 3 sets x 10-12 each leg",
+                        "Glute Bridges: 4 sets x 15-20 reps",
+                        "Single-Leg Calf Raises: 3 sets x 15 each leg",
+                        "Wall Sit: 3 sets x 30-45 seconds"
+                    ],
+                    B: [
+                        "Jump Squats: 4 sets x 10-15 reps",
+                        "Bulgarian Split Squats: 3 sets x 10-12 each leg",
+                        "Single-Leg Glute Bridges: 3 sets x 10-12 each leg",
+                        "Lateral Lunges: 3 sets x 10 each side",
+                        "Calf Raises: 4 sets x 20 reps"
+                    ]
+                }
+            };
+
+            // Determine which workouts to show based on user preference
+            let workouts;
+            switch (fitnessData.workoutPreference) {
+                case 'home':
+                    workouts = homeWorkouts;
+                    break;
+                case 'gym':
+                case 'both':
+                default:
+                    workouts = gymWorkouts;
+                    break;
+            }
+
+            // Get workout cards and update content
+            const pushCard = document.querySelector('.workout-card:nth-child(1)');
+            const pullCard = document.querySelector('.workout-card:nth-child(2)');
+            const legsCard = document.querySelector('.workout-card:nth-child(3)');
+
+            // Update workout cards with appropriate exercises
+            if (pushCard) {
+                // Update Week A
+                const pushExercisesA = pushCard.querySelector('.workout-variation-A ul');
+                if (pushExercisesA) {
+                    pushExercisesA.innerHTML = workouts.push.A.map(exercise => `<li>${exercise}</li>`).join('');
+                }
+                
+                // Update Week B
+                const pushExercisesB = pushCard.querySelector('.workout-variation-B ul');
+                if (pushExercisesB) {
+                    pushExercisesB.innerHTML = workouts.push.B.map(exercise => `<li>${exercise}</li>`).join('');
+                }
+            }
+
+            if (pullCard) {
+                // Update Week A
+                const pullExercisesA = pullCard.querySelector('.workout-variation-A ul');
+                if (pullExercisesA) {
+                    pullExercisesA.innerHTML = workouts.pull.A.map(exercise => `<li>${exercise}</li>`).join('');
+                }
+                
+                // Update Week B
+                const pullExercisesB = pullCard.querySelector('.workout-variation-B ul');
+                if (pullExercisesB) {
+                    pullExercisesB.innerHTML = workouts.pull.B.map(exercise => `<li>${exercise}</li>`).join('');
+                }
+            }
+
+            if (legsCard) {
+                // Update Week A
+                const legsExercisesA = legsCard.querySelector('.workout-variation-A ul');
+                if (legsExercisesA) {
+                    legsExercisesA.innerHTML = workouts.legs.A.map(exercise => `<li>${exercise}</li>`).join('');
+                }
+                
+                // Update Week B
+                const legsExercisesB = legsCard.querySelector('.workout-variation-B ul');
+                if (legsExercisesB) {
+                    legsExercisesB.innerHTML = workouts.legs.B.map(exercise => `<li>${exercise}</li>`).join('');
+                }
+            }
+
+            // Update page title based on workout preference
+            const heroSubtitle = document.querySelector('.hero p');
+            if (heroSubtitle) {
+                const workoutType = fitnessData.workoutPreference === 'home' ? 'Home' : 
+                                  fitnessData.workoutPreference === 'gym' ? 'Gym' : 'Home & Gym';
+                heroSubtitle.textContent = `${workoutType} workouts based on your fitness goals and experience level`;
+            }
+
+            // Mobile menu toggle functionality
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            const navbarMenu = document.getElementById('navbar-menu');
+            
+            if (mobileMenuToggle && navbarMenu) {
+                // Ensure any old event listeners are removed
+                const newMobileMenuToggle = mobileMenuToggle.cloneNode(true);
+                mobileMenuToggle.parentNode.replaceChild(newMobileMenuToggle, mobileMenuToggle);
+                
+                // Add event listener to the fresh element
+                newMobileMenuToggle.addEventListener('click', function(e) {
+                    e.preventDefault(); // Prevent default behavior
+                    console.log("Mobile menu toggle clicked");
+                    navbarMenu.classList.toggle('active');
+                    
+                    // Change icon based on menu state
+                    const icon = this.querySelector('i');
+                    if (icon) {
+                        if (navbarMenu.classList.contains('active')) {
+                            icon.classList.remove('fa-bars');
+                            icon.classList.add('fa-times');
+                        } else {
+                            icon.classList.remove('fa-times');
+                            icon.classList.add('fa-bars');
+                        }
+                    }
+                });
+                
+                // Close menu when a link is clicked
+                const navLinks = navbarMenu.querySelectorAll('a');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        navbarMenu.classList.remove('active');
+                        const icon = newMobileMenuToggle.querySelector('i');
+                        if (icon) {
+                            icon.classList.remove('fa-times');
+                            icon.classList.add('fa-bars');
+                        }
+                    });
+                });
+                
+                console.log("Mobile menu event listeners set up");
+            }
+            
+            // Fitness tips functionality
+            const tips = [
+                "Consistency is key. Aim for 3-4 workouts per week for best results.",
+                "Focus on compound exercises for maximum muscle growth.",
+                "Proper nutrition is 80% of your fitness success.",
+                "Rest days are important for muscle growth and recovery.",
+                "Stay hydrated during workouts to maximize performance.",
+                "Track your progress to stay motivated.",
+                "Warm up properly before each workout to prevent injuries.",
+                "Train each muscle group at least twice per week for optimal results.",
+                "Vary your exercises to prevent plateaus and keep workouts interesting.",
+                "Don't overlook sleep - aim for 7-8 hours for optimal recovery."
+            ];
+            
+            function displayRandomTip() {
+                const tipElement = document.getElementById('daily-tip-text');
+                const randomIndex = Math.floor(Math.random() * tips.length);
+                
+                tipElement.textContent = tips[randomIndex];
+                
+                // Update date
+                const today = new Date();
+                const dateElement = document.getElementById('tip-date');
+                dateElement.textContent = today.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+            }
+
+            // Display initial tip
+            displayRandomTip();
+
+            // New tip button
+            const newTipBtn = document.getElementById('new-tip-btn');
+            if (newTipBtn) {
+                newTipBtn.addEventListener('click', displayRandomTip);
+            }
+
+            // Handle workout variation switching
+            const variationBtns = document.querySelectorAll('.variation-btn');
+            
+            variationBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    variationBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show/hide appropriate workout variations
+                    const variation = this.dataset.variation;
+                    document.querySelectorAll('.workout-variation-A, .workout-variation-B').forEach(el => {
+                        el.style.display = el.classList.contains(`workout-variation-${variation}`) ? 'block' : 'none';
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

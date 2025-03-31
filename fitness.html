@@ -1,0 +1,1597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Planner - Assessment</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #1a237e;
+            --secondary-color: #3949ab;
+            --accent-color: #f50057;
+            --text-color: #2C3E50;
+            --text-light: #7F8C8D;
+            --background-color: #f5f5f5;
+            --card-background: #ffffff;
+            --border-color: #e0e0e0;
+            --success-color: #2e7d32;
+            --warning-color: #f57c00;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 5rem 2rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1" fill="rgba(255,255,255,0.05)"/></svg>');
+            opacity: 0.1;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            position: relative;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .form-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .form-section {
+            background: var(--card-background);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2.5rem;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1.8rem;
+        }
+
+        .form-section h2 i {
+            color: var(--accent-color);
+        }
+
+        .form-section-image {
+            flex: 0 0 300px;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .form-section-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .form-section-content {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .form-group input, 
+        .form-group select {
+            width: 100%;
+            padding: 1.2rem;
+            padding-left: 3rem;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+            color: var(--text-color);
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232C3E50' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1.2rem center;
+            background-size: 1.2em;
+            padding-right: 3rem;
+        }
+
+        .form-group i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            transition: color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(57, 73, 171, 0.1);
+            outline: none;
+        }
+
+        .form-group input:valid,
+        .form-group select:valid {
+            border-color: var(--success-color);
+        }
+
+        .form-group input:invalid,
+        .form-group select:invalid {
+            border-color: var(--accent-color);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 1.1rem;
+        }
+
+        .help-text {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            margin-top: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .help-text::before {
+            content: '💡';
+            font-size: 1.1rem;
+        }
+
+        .form-group .help-text {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            margin-top: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group .help-text::before {
+            content: '💡';
+            font-size: 1.1rem;
+        }
+
+        .form-group input:invalid + .validation-message,
+        .form-group select:invalid + .validation-message {
+            display: block;
+        }
+
+        .form-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--secondary-color);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .form-section:hover::before {
+            opacity: 1;
+        }
+
+        .form-section.completed::before {
+            background: var(--success-color);
+            opacity: 1;
+        }
+
+        .form-section.completed h2 i {
+            color: var(--success-color);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 1.2rem 2.5rem;
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 3rem;
+            gap: 1rem;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--border-color);
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+            transition: width 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .btn:focus {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 3rem 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .form-section {
+                padding: 1.5rem;
+            }
+
+            .calorie-preference {
+                grid-template-columns: 1fr;
+            }
+
+            .button-container {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .form-section-content {
+                grid-template-columns: 1fr;
+            }
+
+            .calorie-preference {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                margin: 1rem 0;
+            }
+
+            .calorie-option {
+                padding: 1.2rem;
+                min-height: 160px;
+                margin-bottom: 0.5rem;
+            }
+
+            .calorie-option h4 {
+                font-size: 1.1rem;
+                margin-bottom: 0.6rem;
+            }
+
+            .calorie-option p {
+                font-size: 0.9rem;
+                margin-bottom: 0.4rem;
+            }
+
+            .calorie-option .time-estimate {
+                font-size: 0.85rem;
+                padding-top: 0.6rem;
+            }
+
+            .calorie-option.selected::after {
+                top: 8px;
+                right: 8px;
+                font-size: 1.1rem;
+            }
+
+            .calorie-preference.error {
+                padding: 0.8rem;
+            }
+
+            .calorie-preference.error::before {
+                font-size: 0.9rem;
+                margin-bottom: 0.4rem;
+            }
+
+            .form-group input, 
+            .form-group select {
+                padding: 1rem;
+                padding-left: 2.5rem;
+                font-size: 0.95rem;
+            }
+
+            .form-group i {
+                left: 0.8rem;
+                font-size: 0.9rem;
+            }
+
+            .form-group label {
+                font-size: 1rem;
+            }
+
+            .help-text {
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .form-container {
+                padding: 1.5rem;
+            }
+
+            .form-section {
+                padding: 2rem;
+            }
+
+            .hero {
+                padding: 3rem 1.5rem;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .form-section-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .calorie-preference {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .hero p {
+                font-size: 0.9rem;
+            }
+
+            .form-section {
+                padding: 1.2rem;
+            }
+
+            .form-group input, 
+            .form-group select {
+                padding: 0.8rem;
+                padding-left: 2.2rem;
+                font-size: 0.9rem;
+            }
+
+            .form-group i {
+                left: 0.7rem;
+                font-size: 0.8rem;
+            }
+
+            .form-group label {
+                font-size: 0.95rem;
+            }
+
+            .help-text {
+                font-size: 0.8rem;
+            }
+
+            .calorie-option {
+                padding: 1rem;
+                min-height: 140px;
+            }
+
+            .calorie-option h4 {
+                font-size: 1rem;
+            }
+
+            .calorie-option p {
+                font-size: 0.85rem;
+            }
+
+            .calorie-option .time-estimate {
+                font-size: 0.8rem;
+            }
+
+            .calorie-preference.error::before {
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Add touch-friendly styles for mobile */
+        @media (hover: none) {
+            .btn:active,
+            .calorie-option:active {
+                transform: scale(0.98);
+            }
+
+            .form-section:active {
+                transform: scale(0.99);
+            }
+
+            .calorie-option {
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            .calorie-option:active {
+                transform: scale(0.98);
+                background: rgba(57, 73, 171, 0.1);
+            }
+        }
+
+        /* Optimize for tablets in landscape */
+        @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+            .form-section-content {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .calorie-preference {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Add support for high-DPI screens */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .hero {
+                image-rendering: -webkit-optimize-contrast;
+            }
+        }
+
+        /* Add support for dark mode */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background-color: #121212;
+                --card-background: #1e1e1e;
+                --text-color: #ffffff;
+                --text-light: #b0b0b0;
+                --border-color: #2d2d2d;
+                --primary-color: #3949ab;
+                --secondary-color: #5c6bc0;
+                --accent-color: #ff4081;
+                --success-color: #4caf50;
+                --warning-color: #ff9800;
+            }
+
+            body {
+                background-color: var(--background-color);
+            }
+
+            .hero {
+                background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+                color: white;
+                padding: 5rem 2rem;
+                text-align: center;
+                margin-bottom: 3rem;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .form-section {
+                background: var(--card-background);
+                border-color: var(--border-color);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            }
+
+            .form-section:hover {
+                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            }
+
+            .form-group input, 
+            .form-group select {
+                background: var(--card-background);
+                color: var(--text-color);
+                border-color: var(--border-color);
+            }
+
+            .form-group input:focus,
+            .form-group select:focus {
+                border-color: var(--secondary-color);
+                box-shadow: 0 0 0 2px rgba(92, 107, 192, 0.2);
+            }
+
+            .form-group i {
+                color: var(--text-light);
+            }
+
+            .form-group label {
+                color: var(--text-color);
+            }
+
+            .help-text {
+                color: var(--text-light);
+            }
+
+            .calorie-option {
+                background: var(--card-background);
+                border-color: var(--border-color);
+            }
+
+            .calorie-option:hover {
+                background: rgba(92, 107, 192, 0.1);
+                border-color: var(--secondary-color);
+            }
+
+            .calorie-option.selected {
+                background: rgba(76, 175, 80, 0.1);
+                border-color: var(--success-color);
+            }
+
+            .calorie-option h4 {
+                color: var(--secondary-color);
+            }
+
+            .calorie-option p {
+                color: var(--text-color);
+            }
+
+            .calorie-option .time-estimate {
+                color: var(--text-light);
+                border-color: var(--border-color);
+            }
+
+            .calorie-option .time-estimate strong {
+                color: var(--secondary-color);
+            }
+
+            .calorie-preference.error {
+                border-color: var(--accent-color);
+                background: rgba(255, 64, 129, 0.1);
+            }
+
+            .calorie-preference.error::before {
+                color: var(--accent-color);
+            }
+
+            .progress-bar {
+                background: var(--border-color);
+            }
+
+            .progress-fill {
+                background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+            }
+
+            .btn {
+                background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+                box-shadow: 0 4px 15px rgba(92, 107, 192, 0.3);
+            }
+
+            .btn:hover {
+                box-shadow: 0 6px 20px rgba(92, 107, 192, 0.4);
+            }
+
+            .btn:focus {
+                box-shadow: 0 0 0 4px rgba(92, 107, 192, 0.3);
+            }
+
+            .form-section.completed::before {
+                background: var(--success-color);
+            }
+
+            .form-section.completed h2 i {
+                color: var(--success-color);
+            }
+
+            /* Add styles for select dropdown in dark mode */
+            .form-group select {
+                background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            }
+
+            /* Add styles for input placeholder in dark mode */
+            .form-group input::placeholder {
+                color: var(--text-light);
+            }
+
+            /* Add styles for validation messages in dark mode */
+            .validation-message {
+                color: var(--accent-color);
+            }
+
+            /* Add styles for success message in dark mode */
+            .success-message {
+                background: var(--card-background);
+                border-color: var(--border-color);
+                color: var(--text-color);
+            }
+        }
+
+        /* Add support for reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        /* Add support for larger text */
+        @media (prefers-reduced-motion: no-preference) {
+            :root {
+                --font-size-base: 16px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            :root {
+                --font-size-base: 18px;
+            }
+        }
+
+        /* Add support for larger touch targets */
+        @media (pointer: coarse) {
+            .btn,
+            .calorie-option,
+            .form-group input,
+            .form-group select {
+                min-height: 44px;
+                min-width: 44px;
+            }
+
+            .calorie-option {
+                min-height: 180px;
+                padding: 1.5rem;
+            }
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .calorie-preference {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .calorie-preference.error {
+            border: 2px solid var(--accent-color);
+            border-radius: 12px;
+            padding: 1rem;
+        }
+
+        .calorie-preference.error::before {
+            content: '⚠️ Please select a calorie adjustment preference';
+            display: block;
+            color: var(--accent-color);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .calorie-option {
+            background: var(--card-background);
+            border: 2px solid var(--border-color);
+            border-radius: 15px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+        }
+
+        .calorie-option:hover {
+            border-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .calorie-option.selected {
+            border-color: var(--success-color);
+            background: rgba(46, 125, 50, 0.1);
+        }
+
+        .calorie-option h4 {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .calorie-option p {
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .calorie-option .time-estimate {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-light);
+        }
+
+        .activity-display {
+            background: linear-gradient(135deg, rgba(57, 73, 171, 0.1), rgba(92, 107, 192, 0.1));
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+            border: 1px solid rgba(57, 73, 171, 0.2);
+        }
+
+        .activity-display h3 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .activity-display p {
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .activity-level-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .activity-level-indicator span {
+            flex: 1;
+            height: 8px;
+            border-radius: 4px;
+            background: var(--border-color);
+        }
+
+        .activity-level-indicator span.active {
+            background: var(--primary-color);
+        }
+
+        .result-container {
+            background: var(--card-background);
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem auto;
+            max-width: 900px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            display: none;
+        }
+
+        .result-container h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+
+        .result-container p {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .result-container span {
+            font-weight: bold;
+            color: var(--secondary-color);
+            font-size: 1.4rem;
+        }
+
+        .unit-toggle {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .unit-btn {
+            flex: 1;
+            padding: 0.8rem;
+            border: 2px solid var(--border-color);
+            background: var(--card-background);
+            color: var(--text-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .unit-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .unit-btn:hover {
+            border-color: var(--secondary-color);
+        }
+
+        .unit-btn.active:hover {
+            background: var(--secondary-color);
+        }
+
+        .height-input-container {
+            width: 100%;
+        }
+
+        .feet-inches {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .feet-inches input {
+            flex: 1;
+        }
+
+        .disabled-link {
+            pointer-events: none;
+            opacity: 0.5;
+            cursor: not-allowed;
+            position: relative;
+            text-decoration: none;
+            color: var(--text-light);
+        }
+
+        .disabled-link::after {
+            content: 'Complete Assessment First';
+            font-size: 0.8em;
+            color: var(--accent-color);
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            background: var(--card-background);
+            padding: 4px 8px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: none;
+        }
+
+        .disabled-link:hover::after {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="navbar-logo">
+                <i class="fas fa-heartbeat"></i> Fitness Planner
+            </a>
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle" style="display: block;">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="navbar-menu" id="navbar-menu">
+                <li><a href="fitness.html" class="active">Assessment</a></li>
+                <li><a href="results.html" class="disabled-link">Results</a></li>
+                <li><a href="workout-plan.html" class="disabled-link">Workouts</a></li>
+                <li><a href="meal-plan.html" class="disabled-link">Meal Plans</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <h1>Fitness Planner</h1>
+        <p>Assess your current fitness level and set goals for a healthier lifestyle.</p>
+    </div>
+
+    <div class="container">
+        <div class="form-section">
+            <div class="card-header">
+                <i class="fas fa-heart"></i>
+                <h2>Personal Information</h2>
+            </div>
+            <div class="form-section-content">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="age">Age</label>
+                    <input type="number" id="age" name="age" required>
+                </div>
+                <div class="form-group">
+                    <label for="gender">Gender</label>
+                    <select id="gender" name="gender" required>
+                        <option value="">Select</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="unit-system">Unit System</label>
+                    <div class="unit-toggle">
+                        <button type="button" class="unit-btn active" data-unit="metric">Metric</button>
+                        <button type="button" class="unit-btn" data-unit="imperial">Imperial</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="height">Height <span class="unit-label">(cm)</span></label>
+                    <div class="height-input-container">
+                        <div class="metric-height">
+                            <input type="number" id="height" name="height" required>
+                        </div>
+                        <div class="imperial-height" style="display: none;">
+                            <div class="feet-inches">
+                                <input type="number" id="height-feet" name="height-feet" placeholder="Feet" min="0" max="8">
+                                <input type="number" id="height-inches" name="height-inches" placeholder="Inches" min="0" max="11">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="weight">Weight <span class="unit-label">(kg)</span></label>
+                    <input type="number" id="weight" name="weight" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-bicycle"></i>
+                <h2>Activity Level</h2>
+            </div>
+            <div class="card-body">
+                <div class="activity-display" id="activityDisplay">
+                    <h3>Your Activity Level</h3>
+                    <p id="activityLevelText">Complete the form to see your activity level</p>
+                    <div class="activity-level-indicator">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-dumbbell"></i>
+                <h2>Fitness Goals</h2>
+            </div>
+            <div class="card-body">
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label for="fitness-goal">Fitness Goal</label>
+                        <select id="fitness-goal" name="fitness-goal" required>
+                            <option value="">Select</option>
+                            <option value="weight-loss">Weight Loss</option>
+                            <option value="muscle-gain">Muscle Gain</option>
+                            <option value="maintenance">Maintenance</option>
+                            <option value="general-fitness">General Fitness</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="goal-weight">Goal Weight <span class="unit-label">(kg)</span></label>
+                        <input type="number" id="goal-weight" name="goal-weight" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="calorie-preference">Weight Loss/Gain Speed</label>
+                        <select id="calorie-preference" name="calorie-preference" required>
+                            <option value="">Select</option>
+                            <option value="high">Fast (1.0-1.5 kg per week)</option>
+                            <option value="moderate">Moderate (0.5-0.75 kg per week)</option>
+                            <option value="low">Slow (0.25-0.5 kg per week)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-walking"></i>
+                <h2>Daily Activity</h2>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="daily-steps">Daily Steps</label>
+                    <input type="number" id="daily-steps" name="daily-steps" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-dumbbell"></i>
+                <h2>Gym Sessions</h2>
+            </div>
+            <div class="card-body">
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label for="workout-preference">Workout Preference</label>
+                        <select id="workout-preference" name="workout-preference" required>
+                            <option value="">Select</option>
+                            <option value="gym">Gym Workouts</option>
+                            <option value="home">Home Workouts</option>
+                            <option value="both">Both Gym & Home</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="gym-sessions">Gym Sessions per Week</label>
+                        <input type="number" id="gym-sessions" name="gym-sessions" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="experience-level">Experience Level</label>
+                        <select id="experience-level" name="experience-level" required>
+                            <option value="">Select</option>
+                            <option value="beginner">Beginner (0-1 year)</option>
+                            <option value="intermediate">Intermediate (1-3 years)</option>
+                            <option value="advanced">Advanced (3+ years)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="center-content">
+            <button class="btn btn-primary" id="calculateBtn">
+                <i class="fas fa-calculator"></i> Calculate
+            </button>
+        </div>
+    </div>
+
+    <div class="card result-container" style="display: none;">
+        <div class="card-header">
+            <i class="fas fa-chart-bar"></i>
+            <h2>Results</h2>
+        </div>
+        <div class="card-body">
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <i class="fas fa-fire"></i>
+                        <h3>Daily Calories</h3>
+                    </div>
+                    <div class="stat-value" id="daily-calories">0</div>
+                    <div class="stat-description">Maintenance calories</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <i class="fas fa-calendar-week"></i>
+                        <h3>Weekly Calories</h3>
+                    </div>
+                    <div class="stat-value" id="weekly-calories">0</div>
+                    <div class="stat-description">Total for the week</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <i class="fas fa-bullseye"></i>
+                        <h3>Target Calories</h3>
+                    </div>
+                    <div class="stat-value" id="target-calories">0</div>
+                    <div class="stat-description">Based on your goals</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Fitness Planner</h3>
+                <ul>
+                    <li><a href="fitness.html">Assessment</a></li>
+                    <li><a href="results.html">Results</a></li>
+                    <li><a href="workout-plan.html">Workouts</a></li>
+                    <li><a href="meal-plan.html">Meal Plans</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="#">Fitness Blog</a></li>
+                    <li><a href="#">Nutrition Guide</a></li>
+                    <li><a href="#">Exercise Library</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Contact</h3>
+                <ul>
+                    <li><a href="#">Support</a></li>
+                    <li><a href="#">Feedback</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 Fitness Planner. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Constants for calculations
+        const CALORIES_PER_KG = 7700; // Calories in 1 kg of body fat
+        const PROTEIN_PER_KG = {
+            'weight-loss': 2.2,    // Higher protein during weight loss
+            'muscle-gain': 2.4,    // Higher protein for muscle growth
+            'maintenance': 1.8,    // Adequate protein for maintenance
+            'general-fitness': 2.0  // Balanced protein intake
+        };
+
+        // MET values for different activities
+        const MET_VALUES = {
+            'walking': {
+                'slow': 2.8,    // Slow walking (< 2.5 mph)
+                'moderate': 3.5, // Normal walking (2.5-3.5 mph)
+                'brisk': 4.3    // Brisk walking (> 3.5 mph)
+            },
+            'gym': {
+                'beginner': 3.8,      // Light resistance training
+                'intermediate': 5.0,   // Moderate resistance training
+                'advanced': 6.0        // Vigorous resistance training
+            }
+        };
+
+        // Activity level thresholds - scientifically validated
+        const ACTIVITY_LEVELS = {
+            SEDENTARY: { steps: 4000, sessions: 0, multiplier: 1.2 },      // 0-4k steps
+            LIGHTLY_ACTIVE: { steps: 7500, sessions: 2, multiplier: 1.375 },// 5k-7.5k steps
+            MODERATELY_ACTIVE: { steps: 10000, sessions: 3, multiplier: 1.55 }, // 7.5k-10k steps
+            VERY_ACTIVE: { steps: 12500, sessions: 4, multiplier: 1.725 },  // 10k-12.5k steps + regular exercise
+            EXTRA_ACTIVE: { steps: 15000, sessions: 5, multiplier: 1.9 }    // 15k+ steps or intense training
+        };
+
+        function calculateActivityLevel(dailySteps, gymSessions) {
+            // Convert gym sessions to daily step equivalent (approximately 4000 steps per session)
+            const gymStepsEquivalent = gymSessions * 4000 / 7; // Convert to daily average
+            const totalDailyActivity = parseInt(dailySteps) + gymStepsEquivalent;
+
+            // Determine activity level based on total activity
+            if (totalDailyActivity >= ACTIVITY_LEVELS.EXTRA_ACTIVE.steps && gymSessions >= ACTIVITY_LEVELS.EXTRA_ACTIVE.sessions) {
+                return { level: 'Extra Active', multiplier: ACTIVITY_LEVELS.EXTRA_ACTIVE.multiplier, index: 4 };
+            } else if (totalDailyActivity >= ACTIVITY_LEVELS.VERY_ACTIVE.steps && gymSessions >= ACTIVITY_LEVELS.VERY_ACTIVE.sessions) {
+                return { level: 'Very Active', multiplier: ACTIVITY_LEVELS.VERY_ACTIVE.multiplier, index: 3 };
+            } else if (totalDailyActivity >= ACTIVITY_LEVELS.MODERATELY_ACTIVE.steps && gymSessions >= ACTIVITY_LEVELS.MODERATELY_ACTIVE.sessions) {
+                return { level: 'Moderately Active', multiplier: ACTIVITY_LEVELS.MODERATELY_ACTIVE.multiplier, index: 2 };
+            } else if (totalDailyActivity >= ACTIVITY_LEVELS.LIGHTLY_ACTIVE.steps && gymSessions >= ACTIVITY_LEVELS.LIGHTLY_ACTIVE.sessions) {
+                return { level: 'Lightly Active', multiplier: ACTIVITY_LEVELS.LIGHTLY_ACTIVE.multiplier, index: 1 };
+            } else {
+                return { level: 'Sedentary', multiplier: ACTIVITY_LEVELS.SEDENTARY.multiplier, index: 0 };
+            }
+        }
+
+        function updateActivityDisplay(dailySteps, gymSessions) {
+            const activityLevel = calculateActivityLevel(dailySteps, gymSessions);
+            const activityDisplay = document.getElementById('activityDisplay');
+            const activityLevelText = document.getElementById('activityLevelText');
+            const indicators = document.querySelectorAll('.activity-level-indicator span');
+
+            if (activityDisplay && activityLevelText && indicators) {
+                // Update text
+                activityLevelText.innerHTML = `
+                    Based on your ${dailySteps} daily steps and ${gymSessions} weekly gym sessions:<br>
+                    <strong>${activityLevel.level}</strong> (Activity Multiplier: ${activityLevel.multiplier})
+                `;
+
+                // Update indicator bars
+                indicators.forEach((indicator, index) => {
+                    indicator.classList.toggle('active', index <= activityLevel.index);
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const calculateBtn = document.getElementById('calculateBtn');
+            const resultsLink = document.querySelector('a[href="results.html"]');
+            const unitBtns = document.querySelectorAll('.unit-btn');
+            const unitLabels = document.querySelectorAll('.unit-label');
+            const weightInput = document.getElementById('weight');
+            const goalWeightInput = document.getElementById('goal-weight');
+            const heightInput = document.getElementById('height');
+            const heightFeetInput = document.getElementById('height-feet');
+            const heightInchesInput = document.getElementById('height-inches');
+            const metricHeight = document.querySelector('.metric-height');
+            const imperialHeight = document.querySelector('.imperial-height');
+            let currentUnit = 'metric';
+
+            // Unit conversion functions
+            function kgToLbs(kg) {
+                if (isNaN(kg) || kg < 0) return 0;
+                return kg * 2.20462;
+            }
+
+            function lbsToKg(lbs) {
+                if (isNaN(lbs) || lbs < 0) return 0;
+                return lbs / 2.20462;
+            }
+
+            function cmToFeetInches(cm) {
+                if (isNaN(cm) || cm < 0) return { feet: 0, inches: 0 };
+                const totalInches = cm / 2.54;
+                const feet = Math.floor(totalInches / 12);
+                const inches = Math.round(totalInches % 12);
+                return { feet, inches };
+            }
+
+            function feetInchesToCm(feet, inches) {
+                if (isNaN(feet) || isNaN(inches) || feet < 0 || inches < 0) return 0;
+                return (feet * 30.48) + (inches * 2.54);
+            }
+
+            // Update unit labels and convert values
+            function updateUnitSystem(unit) {
+                currentUnit = unit;
+                unitLabels.forEach(label => {
+                    const isWeightLabel = label.parentElement.textContent.includes('Weight');
+                    label.textContent = isWeightLabel ? 
+                        (unit === 'metric' ? '(kg)' : '(lbs)') : 
+                        (unit === 'metric' ? '(cm)' : '(ft/in)');
+                });
+
+                // Toggle height input display
+                metricHeight.style.display = unit === 'metric' ? 'block' : 'none';
+                imperialHeight.style.display = unit === 'imperial' ? 'block' : 'none';
+
+                // Convert existing values if they exist
+                if (weightInput.value) {
+                    const currentValue = parseFloat(weightInput.value);
+                    weightInput.value = unit === 'metric' ? 
+                        lbsToKg(currentValue).toFixed(1) : 
+                        kgToLbs(currentValue).toFixed(1);
+                }
+
+                if (goalWeightInput.value) {
+                    const currentValue = parseFloat(goalWeightInput.value);
+                    goalWeightInput.value = unit === 'metric' ? 
+                        lbsToKg(currentValue).toFixed(1) : 
+                        kgToLbs(currentValue).toFixed(1);
+                }
+
+                // Convert height
+                if (heightInput.value) {
+                    const cm = parseFloat(heightInput.value);
+                    const { feet, inches } = cmToFeetInches(cm);
+                    heightFeetInput.value = feet;
+                    heightInchesInput.value = inches;
+                }
+            }
+
+            // Unit toggle event listeners
+            unitBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    unitBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    updateUnitSystem(this.dataset.unit);
+                });
+            });
+
+            // Check if fitness data exists and enable/disable navigation links
+            const fitnessData = localStorage.getItem('fitnessResults');
+            const navLinks = document.querySelectorAll('.navbar-menu a:not(.active)');
+            if (!fitnessData) {
+                navLinks.forEach(link => {
+                    link.classList.add('disabled-link');
+                    link.title = 'Complete the assessment first';
+                    // Prevent click events
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        return false;
+                    });
+                });
+            }
+
+            // Add event listeners for steps and gym sessions
+            const dailyStepsInput = document.getElementById('daily-steps');
+            const gymSessionsInput = document.getElementById('gym-sessions');
+            
+            if (dailyStepsInput && gymSessionsInput) {
+                dailyStepsInput.addEventListener('input', function() {
+                    const steps = this.value;
+                    const gymSessions = gymSessionsInput.value || 0;
+                    if (steps) {
+                        updateActivityDisplay(steps, gymSessions);
+                    }
+                });
+
+                gymSessionsInput.addEventListener('input', function() {
+                    const gymSessions = this.value;
+                    const steps = dailyStepsInput.value || 0;
+                    if (gymSessions) {
+                        updateActivityDisplay(steps, gymSessions);
+                    }
+                });
+            }
+
+            calculateBtn.addEventListener('click', function() {
+                // Get form values
+                const age = parseInt(document.getElementById('age').value);
+                let weight = parseFloat(document.getElementById('weight').value);
+                let height;
+                const gender = document.getElementById('gender').value;
+                const dailySteps = parseInt(document.getElementById('daily-steps').value);
+                const gymSessions = parseInt(document.getElementById('gym-sessions').value);
+                const experienceLevel = document.getElementById('experience-level').value;
+                const fitnessGoal = document.getElementById('fitness-goal').value;
+                let goalWeight = parseFloat(document.getElementById('goal-weight').value);
+                const caloriePreference = document.getElementById('calorie-preference').value;
+                const workoutPreference = document.getElementById('workout-preference').value;
+
+                // Get height based on current unit
+                if (currentUnit === 'metric') {
+                    height = parseFloat(heightInput.value);
+                } else {
+                    const feet = parseFloat(heightFeetInput.value);
+                    const inches = parseFloat(heightInchesInput.value);
+                    height = feetInchesToCm(feet, inches);
+                }
+
+                // Convert weights to kg if in imperial
+                if (currentUnit === 'imperial') {
+                    weight = lbsToKg(weight);
+                    goalWeight = lbsToKg(goalWeight);
+                }
+                
+                // Log the converted values
+                console.log("Height (cm):", height);
+                console.log("Weight (kg):", weight);
+                console.log("Goal Weight (kg):", goalWeight);
+
+                // Validate inputs
+                if (!age || !weight || !height || !gender || !dailySteps || !gymSessions || 
+                    !experienceLevel || !fitnessGoal || !goalWeight || !caloriePreference || !workoutPreference) {
+                    alert('Please fill in all fields');
+                    return;
+                }
+
+                // Calculate activity level
+                const activityData = calculateActivityLevel(dailySteps, gymSessions);
+
+                // Calculate BMR using Mifflin-St Jeor Equation
+                let bmr;
+                if (gender === 'male') {
+                    bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
+                } else {
+                    bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
+                }
+
+                // Calculate TDEE based on activity level
+                const tdee = bmr * activityData.multiplier;
+
+                // Calculate target calories based on fitness goal and preference
+                let targetCalories;
+                switch(fitnessGoal) {
+                    case 'weight-loss':
+                        const weeklyDeficit = caloriePreference === 'high' ? 7700 : 
+                                            caloriePreference === 'moderate' ? 3850 : 1925;
+                        targetCalories = tdee - (weeklyDeficit / 7);
+                        break;
+                    case 'muscle-gain':
+                        const weeklySurplus = caloriePreference === 'high' ? 7700 : 
+                                            caloriePreference === 'moderate' ? 3850 : 1925;
+                        targetCalories = tdee + (weeklySurplus / 7);
+                        break;
+                    case 'maintenance':
+                    case 'general-fitness':
+                        targetCalories = tdee;
+                        break;
+                }
+
+                // Calculate macros based on fitness goal
+                let macros;
+                switch(fitnessGoal) {
+                    case 'weight-loss':
+                        macros = {
+                            protein: Math.round(weight * 2),
+                            carbs: Math.round((targetCalories * 0.4) / 4),
+                            fat: Math.round((targetCalories * 0.3) / 9)
+                        };
+                        break;
+                    case 'muscle-gain':
+                        macros = {
+                            protein: Math.round(weight * 2.2),
+                            carbs: Math.round((targetCalories * 0.5) / 4),
+                            fat: Math.round((targetCalories * 0.2) / 9)
+                        };
+                        break;
+                    case 'maintenance':
+                    case 'general-fitness':
+                        macros = {
+                            protein: Math.round(weight * 1.8),
+                            carbs: Math.round((targetCalories * 0.45) / 4),
+                            fat: Math.round((targetCalories * 0.25) / 9)
+                        };
+                        break;
+                }
+
+                // Calculate weight difference
+                const weightDifference = Math.abs(goalWeight - weight);
+
+                // Create fitness results object
+                const fitnessResults = {
+                    dailyCalories: Math.round(tdee),
+                    targetCalories: Math.round(targetCalories),
+                    fitnessGoal: fitnessGoal,
+                    goalWeight: goalWeight,
+                    weightDifference: weightDifference,
+                    activityLevel: activityData.level,
+                    experienceLevel: experienceLevel,
+                    workoutPreference: workoutPreference,
+                    macros: macros,
+                    weight: weight,
+                    height: height, // Height in cm
+                    age: age,
+                    gender: gender,
+                    name: document.getElementById('name').value || 'User',
+                    caloriePreference: document.getElementById('calorie-preference').value
+                };
+
+                // Log the complete object for debugging
+                console.log("Saving fitness data:", fitnessResults);
+
+                // Save to localStorage
+                localStorage.setItem('fitnessResults', JSON.stringify(fitnessResults));
+
+                // Initialize weight tracking data if it doesn't exist
+                let weightData = JSON.parse(localStorage.getItem('weightData'));
+                if (!weightData) {
+                    weightData = { weights: [] };
+                }
+                
+                // Ensure weights array exists
+                if (!weightData.weights) {
+                    weightData.weights = [];
+                }
+                
+                // Add initial weight entry if no data exists
+                if (weightData.weights.length === 0) {
+                    weightData.weights.push({
+                        date: new Date().toISOString(),
+                        weight: weight
+                    });
+                    localStorage.setItem('weightData', JSON.stringify(weightData));
+                }
+
+                // Show success message
+                alert('Your fitness data has been saved successfully!');
+                
+                // Enable results link
+                resultsLink.style.pointerEvents = 'auto';
+                resultsLink.style.opacity = '1';
+                resultsLink.title = '';
+
+                // Redirect to results page
+                window.location.href = 'results.html';
+            });
+
+            // Add mobile menu toggle functionality
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            const navbarMenu = document.getElementById('navbar-menu');
+            
+            if (mobileMenuToggle && navbarMenu) {
+                // Ensure any old event listeners are removed
+                const newMobileMenuToggle = mobileMenuToggle.cloneNode(true);
+                mobileMenuToggle.parentNode.replaceChild(newMobileMenuToggle, mobileMenuToggle);
+                
+                // Add event listener to the fresh element
+                newMobileMenuToggle.addEventListener('click', function(e) {
+                    e.preventDefault(); // Prevent default behavior
+                    console.log("Mobile menu toggle clicked");
+                    navbarMenu.classList.toggle('active');
+                    
+                    // Change icon based on menu state
+                    const icon = this.querySelector('i');
+                    if (icon) {
+                        if (navbarMenu.classList.contains('active')) {
+                            icon.classList.remove('fa-bars');
+                            icon.classList.add('fa-times');
+                        } else {
+                            icon.classList.remove('fa-times');
+                            icon.classList.add('fa-bars');
+                        }
+                    }
+                });
+                
+                // Close menu when a link is clicked
+                const navLinks = navbarMenu.querySelectorAll('a');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        navbarMenu.classList.remove('active');
+                        const icon = newMobileMenuToggle.querySelector('i');
+                        if (icon) {
+                            icon.classList.remove('fa-times');
+                            icon.classList.add('fa-bars');
+                        }
+                    });
+                });
+                
+                console.log("Mobile menu event listeners set up");
+            }
+        });
+    </script>
+</body>
+</html>

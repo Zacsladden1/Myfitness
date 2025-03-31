@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Results & Progress</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="navbar-logo">
+                <i class="fas fa-heartbeat"></i> Fitness Planner
+            </a>
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle" style="display: block;">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="navbar-menu" id="navbar-menu">
+                <li><a href="fitness.html">Assessment</a></li>
+                <li><a href="results.html" class="active">Results</a></li>
+                <li><a href="workout-plan.html">Workouts</a></li>
+                <li><a href="meal-plan.html">Meal Plans</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero section -->
+    <div class="hero">
+        <h1>Your Fitness Results</h1>
+        <p>Track your progress and see your personalized stats</p>
+    </div>
+
+    <!-- Main content -->
+    <div class="container">
+        <!-- Stats overview -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <i class="fas fa-weight"></i>
+                    <h3>Current BMI</h3>
+                </div>
+                <div class="stat-value" id="bmiValue">Loading...</div>
+                <div class="stat-description" id="bmiCategory">Calculating...</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <i class="fas fa-fire"></i>
+                    <h3>Daily Calories</h3>
+                </div>
+                <div class="stat-value" id="calorieValue">Loading...</div>
+                <div class="stat-description">Recommended daily intake</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Maintenance Calories</h3>
+                </div>
+                <div class="stat-value" id="maintenanceValue">Loading...</div>
+                <div class="stat-description">Calories to maintain current weight</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <i class="fas fa-bullseye"></i>
+                    <h3>Weight Goal</h3>
+                </div>
+                <div class="stat-value" id="weightGoal">Loading...</div>
+                <div class="stat-description" id="weightToGo">Calculating...</div>
+            </div>
+        </div>
+
+        <!-- Macronutrient breakdown -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-utensils"></i>
+                <h2>Macronutrient Breakdown</h2>
+            </div>
+            <div class="grid-3">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <i class="fas fa-drumstick-bite"></i>
+                        <h3>Protein</h3>
+                    </div>
+                    <div class="stat-value" id="proteinValue">Loading...</div>
+                    <div class="stat-description">Build and repair muscle</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <i class="fas fa-bread-slice"></i>
+                        <h3>Carbs</h3>
+                    </div>
+                    <div class="stat-value" id="carbsValue">Loading...</div>
+                    <div class="stat-description">Energy for your activities</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <i class="fas fa-oil-can"></i>
+                        <h3>Fat</h3>
+                    </div>
+                    <div class="stat-value" id="fatValue">Loading...</div>
+                    <div class="stat-description">Essential for health</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weight tracking -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-chart-line"></i>
+                <h2>Weight Progress</h2>
+            </div>
+            <div class="card-body">
+                <div class="weight-input-container">
+                    <label for="weightInput">Enter your current weight in kg:</label>
+                    <input type="number" id="weightInput" step="0.1" required placeholder="Enter weight in kg">
+                    <button id="addWeightBtn" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Add Entry
+                    </button>
+                    <button id="deleteLastWeightBtn" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Delete Last Entry
+                    </button>
+                </div>
+                <div class="chart-container">
+                    <canvas id="weightChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Daily fitness tips -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-lightbulb"></i>
+                <h2>Daily Fitness Tips</h2>
+            </div>
+            <div id="fitnessTip" class="message message-success">
+                <i class="fas fa-info-circle"></i>
+                <div>Loading today's fitness tip...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Fitness Planner</h3>
+                <ul>
+                    <li><a href="fitness.html">Assessment</a></li>
+                    <li><a href="results.html">Results</a></li>
+                    <li><a href="workout-plan.html">Workouts</a></li>
+                    <li><a href="meal-plan.html">Meal Plans</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="#">Fitness Blog</a></li>
+                    <li><a href="#">Nutrition Guide</a></li>
+                    <li><a href="#">Exercise Library</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Contact</h3>
+                <ul>
+                    <li><a href="#">Support</a></li>
+                    <li><a href="#">Feedback</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 Fitness Planner. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Store data globally
+        let fitnessData = null;
+        let weightData = [];
+        // Store chart instance globally
+        let weightChart = null;
+
+        // Helper function to detect units and convert if needed
+        function detectUnits(weight, height) {
+            // Always use metric units to avoid weight calculation issues
+            localStorage.setItem('userUnitPreference', 'metric');
+            const userPreference = 'metric';
+            
+            console.log(`Using metric units for all calculations`);
+            return {
+                system: 'metric',
+                weight: 'kg',
+                height: 'cm'
+            };
+        }
+
+        // Calculate BMI using the standard formula
+        function calculateBMI(weight, height) {
+            // Ensure inputs are reasonable numbers
+            weight = parseFloat(weight);
+            height = parseFloat(height);
+            
+            if (isNaN(weight) || weight <= 0 || weight > 500 || 
+                isNaN(height) || height <= 0 || height > 300) {
+                console.error("Invalid inputs for BMI calculation:", weight, height);
+                return 25; // Return a default BMI in the normal range
+            }
+            
+            console.log(`BMI calculation - Using metric units`);
+            console.log(`Weight: ${weight}kg, Height: ${height}cm`);
+            
+            // Metric calculation: weight (kg) / (height (m))²
+            const heightInMeters = height / 100;
+            const bmi = weight / (heightInMeters * heightInMeters);
+            console.log(`Metric BMI calculation: ${weight}kg / (${heightInMeters}m)² = ${bmi}`);
+            
+            // Ensure the result is within a reasonable range
+            if (isNaN(bmi) || bmi < 10 || bmi > 100) {
+                console.warn("BMI outside reasonable range:", bmi);
+                return 25; // Return a default BMI in the normal range
+            }
+            
+            return bmi;
+        }
+
+        // Get BMI category
+        function getBMICategory(bmi) {
+            if (bmi < 18.5) {
+                return 'Underweight';
+            } else if (bmi < 25) {
+                return 'Normal weight';
+            } else if (bmi < 30) {
+                return 'Overweight';
+            } else {
+                return 'Obese';
+            }
+        }
+
+        // Update the chart with the weight data
+        function updateChart() {
+            const ctx = document.getElementById('weightChart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (weightChart) {
+                weightChart.destroy();
+            }
+            
+            // Get weight data directly from localStorage
+            let weightData = JSON.parse(localStorage.getItem('weightData'));
+            
+            // Check if we need to initialize weight data from fitness data
+            if (!weightData || !weightData.weights || weightData.weights.length === 0) {
+                fitnessData = JSON.parse(localStorage.getItem('fitnessResults'));
+                if (fitnessData && fitnessData.weight) {
+                    // Create initial weight entry from fitness assessment
+                    weightData = {
+                        weights: [{
+                            date: new Date().toISOString(),
+                            weight: fitnessData.weight
+                        }]
+                    };
+                    // Save to localStorage
+                    localStorage.setItem('weightData', JSON.stringify(weightData));
+                    console.log("Created initial weight entry from fitness data:", weightData);
+                }
+            }
+            
+            // If still no data after initialization attempt, show empty message
+            if (!weightData || !weightData.weights || weightData.weights.length === 0) {
+                // No data, show message
+                ctx.font = '16px Arial';
+                ctx.fillStyle = '#7F8C8D';
+                ctx.textAlign = 'center';
+                ctx.fillText('No weight data available. Add your first entry!', ctx.canvas.width / 2, ctx.canvas.height / 2);
+                return;
+            }
+            
+            // Detect units
+            fitnessData = JSON.parse(localStorage.getItem('fitnessResults'));
+            const units = detectUnits(fitnessData.weight, fitnessData.height);
+            const weightUnit = units.weight;
+            
+            // Update the weight unit label in the input form
+            const weightUnitLabel = document.getElementById('weightUnitLabel');
+            if (weightUnitLabel) {
+                weightUnitLabel.textContent = weightUnit;
+            }
+            
+            // Sort entries by date
+            const sortedEntries = [...weightData.weights].sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            const dates = sortedEntries.map(entry => new Date(entry.date).toLocaleDateString());
+            const weights = sortedEntries.map(entry => entry.weight);
+            
+            // Define an array of goal weight points (same length as dates)
+            const goalWeight = fitnessData.goalWeight;
+            const goalWeights = Array(dates.length).fill(goalWeight);
+            
+            weightChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [
+                        {
+                            label: `Weight (${weightUnit})`,
+                            data: weights,
+                            backgroundColor: 'rgba(57, 73, 171, 0.2)',
+                            borderColor: '#3949ab',
+                            borderWidth: 3,
+                            pointBackgroundColor: '#3949ab',
+                            pointRadius: 5,
+                            tension: 0.1,
+                            fill: false
+                        },
+                        {
+                            label: 'Goal Weight',
+                            data: goalWeights,
+                            borderColor: 'rgba(245, 0, 87, 0.5)',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            pointRadius: 0,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Weight: ${context.raw} ${weightUnit}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            title: {
+                                display: true,
+                                text: `Weight (${weightUnit})`
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update weight history display
+        function updateWeightHistory() {
+            // This function is no longer needed as we're using the chart
+            return;
+        }
+
+        // Add a new weight entry
+        function addWeight() {
+            const weightInput = document.getElementById('weightInput');
+            
+            if (!weightInput) {
+                console.error('Weight input element not found');
+                return;
+            }
+            
+            // Parse the weight value directly from the input and ensure it's a number
+            const weightInputValue = weightInput.value.trim();
+            const weight = parseFloat(weightInputValue);
+            
+            if (isNaN(weight) || weight <= 0) {
+                alert('Please enter a valid weight');
+                return;
+            }
+
+            // Debug the exact input value
+            console.log("Raw weight input value:", weightInputValue);
+            console.log("Parsed weight value:", weight);
+
+            // Clear localStorage first to remove any corrupt data
+            localStorage.removeItem('weightData');
+            
+            // Get existing weight data or initialize new object with empty weights array
+            let weightData = { weights: [] };
+            console.log("Creating fresh weight data object");
+            
+            // Get the fitness data to have initial entry
+            const fitnessData = JSON.parse(localStorage.getItem('fitnessResults'));
+            if (fitnessData && fitnessData.weight && weightData.weights.length === 0) {
+                weightData.weights.push({
+                    date: new Date(Date.now() - 86400000).toISOString(), // Yesterday
+                    weight: parseFloat(fitnessData.weight)
+                });
+                console.log("Added initial weight from fitness data:", fitnessData.weight);
+            }
+            
+            // Create new entry with current date and weight
+            const newEntry = {
+                date: new Date().toISOString(),
+                weight: weight  // Store the exact parsed weight value
+            };
+            console.log("New entry being added:", newEntry);
+            
+            // Add new weight entry
+            weightData.weights.push(newEntry);
+            console.log("Updated weights array:", weightData.weights);
+            
+            // Save to localStorage
+            localStorage.setItem('weightData', JSON.stringify(weightData));
+            console.log("Saved to localStorage");
+            
+            // Verify the stored weight value by reading it back
+            const verifyData = JSON.parse(localStorage.getItem('weightData'));
+            const lastEntry = verifyData.weights[verifyData.weights.length - 1];
+            console.log("Verification - Last stored weight:", lastEntry.weight);
+            
+            // Clear input
+            weightInput.value = '';
+            
+            // Update chart and stats
+            updateChart();
+            updateStats();
+            
+            // Show success message
+            const addBtn = document.getElementById('addWeightBtn');
+            if (addBtn) {
+                const originalText = addBtn.innerHTML;
+                addBtn.innerHTML = '<i class="fas fa-check"></i> Added!';
+                
+                setTimeout(() => {
+                    addBtn.innerHTML = originalText;
+                }, 2000);
+            }
+        }
+
+        // Update the stats display
+        function updateStats() {
+            // Load fitness data
+            fitnessData = JSON.parse(localStorage.getItem('fitnessResults'));
+            const weightData = JSON.parse(localStorage.getItem('weightData')) || { weights: [] };
+
+            if (!fitnessData) {
+                console.error('No fitness data available');
+                document.getElementById('bmiValue').textContent = 'No data';
+                document.getElementById('bmiCategory').textContent = 'Please complete fitness assessment';
+                document.getElementById('calorieValue').textContent = 'No data';
+                document.getElementById('maintenanceValue').textContent = 'No data';
+                document.getElementById('weightGoal').textContent = 'No data';
+                document.getElementById('weightToGo').textContent = 'Complete assessment';
+                return;
+            }
+
+            try {
+                console.log("Fitness Data:", fitnessData);
+                console.log("Weight Data:", weightData);
+                
+                // Get current weight (most recent entry or initial weight)
+                let currentWeight = 0;
+                if (weightData.weights && weightData.weights.length > 0) {
+                    // Sort weight entries by date to get the latest
+                    const sortedWeights = [...weightData.weights].sort((a, b) => 
+                        new Date(b.date) - new Date(a.date));
+                    currentWeight = parseFloat(sortedWeights[0].weight);
+                    console.log("Using most recent weight entry:", currentWeight);
+                } else {
+                    currentWeight = parseFloat(fitnessData.weight);
+                    console.log("Using initial weight from fitness data:", currentWeight);
+                }
+                
+                // Ensure goal weight is a number
+                const goalWeight = parseFloat(fitnessData.goalWeight);
+                
+                // Ensure weight and height are valid numbers
+                if (isNaN(currentWeight) || currentWeight <= 0) {
+                    console.error("Invalid weight:", currentWeight);
+                    currentWeight = 70; // Default fallback weight
+                }
+                
+                let height = parseFloat(fitnessData.height);
+                if (isNaN(height) || height <= 0) {
+                    console.error("Invalid height:", height);
+                    height = 170; // Default fallback height
+                }
+                
+                console.log("Current Weight (after validation):", currentWeight);
+                console.log("Height (after validation):", height);
+                console.log("Goal Weight (after parsing):", goalWeight);
+                console.log("Weight comparison (currentWeight > goalWeight):", currentWeight > goalWeight);
+
+                // Detect whether we're using metric or imperial units
+                const units = detectUnits(currentWeight, height);
+                console.log(`Detected units in updateStats: ${units.system}`);
+                
+                // Calculate and update BMI
+                console.log(`Calculating BMI with weight: ${currentWeight}${units.weight} and height: ${height}${units.height}`);
+                const bmi = calculateBMI(currentWeight, height);
+                console.log("Calculated BMI:", bmi);
+                document.getElementById('bmiValue').textContent = bmi.toFixed(1);
+                document.getElementById('bmiCategory').textContent = getBMICategory(bmi);
+
+                // Update maintenance calories display
+                document.getElementById('maintenanceValue').textContent = 
+                    `${Math.round(fitnessData.dailyCalories).toLocaleString()} kcal`;
+                
+                // Display target calories with explanation of deficit/surplus
+                let calorieExplanation = '';
+                if (fitnessData.fitnessGoal === 'weight-loss') {
+                    const deficit = fitnessData.dailyCalories - fitnessData.targetCalories;
+                    calorieExplanation = `<span style="font-size: 0.8rem; color: var(--text-light);">${Math.round(deficit).toLocaleString()} kcal deficit</span>`;
+                } else if (fitnessData.fitnessGoal === 'muscle-gain') {
+                    const surplus = fitnessData.targetCalories - fitnessData.dailyCalories;
+                    calorieExplanation = `<span style="font-size: 0.8rem; color: var(--text-light);">${Math.round(surplus).toLocaleString()} kcal surplus</span>`;
+                }
+                
+                // Update calorie display with proper formatting
+                const calorieElement = document.getElementById('calorieValue');
+                calorieElement.innerHTML = 
+                    `${Math.round(fitnessData.targetCalories).toLocaleString()} kcal<br>${calorieExplanation}`;
+
+                // Calculate difference between current weight and goal weight
+                const weightDiff = parseFloat(currentWeight) - parseFloat(goalWeight);
+                console.log("Raw weight difference:", weightDiff);
+                const weightToGo = Math.abs(weightDiff);
+                console.log("Absolute weight difference:", weightToGo);
+
+                // Get the starting weight from fitness assessment
+                const startWeight = parseFloat(fitnessData.weight);
+                console.log("Starting weight from assessment:", startWeight);
+
+                // Update weight goal with proper formatting including starting weight
+                const weightUnit = units.weight;
+                document.getElementById('weightGoal').innerHTML = 
+                    `${goalWeight.toFixed(1)} ${weightUnit} <span style="font-size: 0.8rem; color: var(--text-light);">(from ${startWeight.toFixed(1)} ${weightUnit} initial)</span>`;
+                
+                // Set direction based on fitness goal, not numeric difference
+                let weightDirection;
+                if (fitnessData.fitnessGoal === 'weight-loss') {
+                    weightDirection = 'to lose';
+                    console.log("Direction set to 'to lose' based on weight-loss goal");
+                } else if (fitnessData.fitnessGoal === 'muscle-gain') {
+                    weightDirection = 'to gain';
+                    console.log("Direction set to 'to gain' based on muscle-gain goal");
+                } else if (fitnessData.fitnessGoal === 'maintenance') {
+                    weightDirection = 'to maintain';
+                    console.log("Direction set to 'to maintain' based on maintenance goal");
+                } else {
+                    // For general fitness or any other goals, use numerical comparison
+                    if (weightDiff > 0.1) {
+                        weightDirection = 'to lose';
+                        console.log("Direction: to lose (current > goal)");
+                    } else if (weightDiff < -0.1) {
+                        weightDirection = 'to gain';
+                        console.log("Direction: to gain (current < goal)");
+                    } else {
+                        weightDirection = 'at goal';
+                        console.log("Direction: at goal (difference within 0.1kg)");
+                    }
+                }
+                
+                console.log("Final weight direction:", weightDirection);
+                
+                if (weightDirection === 'at goal') {
+                    document.getElementById('weightToGo').textContent = `You're at your goal weight!`;
+                } else {
+                    document.getElementById('weightToGo').textContent = 
+                        `${weightToGo.toFixed(1)} ${weightUnit} ${weightDirection}`;
+                }
+
+                // Calculate and display time to goal
+                let weeklyChange;
+                if (fitnessData.fitnessGoal === 'weight-loss') {
+                    // For weight loss, use rates based on calorie preference
+                    if (fitnessData.caloriePreference === 'high') {
+                        weeklyChange = currentWeight > 100 ? 1.5 : 
+                                     currentWeight > 80 ? 1.25 : 1.0;
+                    } else if (fitnessData.caloriePreference === 'moderate') {
+                        weeklyChange = 0.75; // Moderate weight loss rate
+                    } else {
+                        weeklyChange = 0.5; // Slow weight loss rate
+                    }
+                } else if (fitnessData.fitnessGoal === 'muscle-gain') {
+                    weeklyChange = fitnessData.caloriePreference === 'high' ? 0.75 : 
+                                 fitnessData.caloriePreference === 'moderate' ? 0.5 : 0.25;
+                } else {
+                    weeklyChange = 0;
+                }
+
+                // Clear any existing timeline elements to prevent duplicates
+                const existingTimeline = document.querySelector('.weight-timeline');
+                if (existingTimeline) {
+                    existingTimeline.remove();
+                }
+
+                // Only display timeline if there is a goal weight different from current weight
+                if (Math.abs(currentWeight - goalWeight) > 0.1) {
+                    const weeksToGoal = weeklyChange > 0 ? Math.ceil(weightToGo / weeklyChange) : 0;
+                    const monthsToGoal = Math.ceil(weeksToGoal / 4);
+                    
+                    // Create a proper timeline element for the weight goal
+                    const timelineElement = document.createElement('div');
+                    timelineElement.className = 'weight-timeline';
+                    timelineElement.style.fontSize = '0.9rem';
+                    timelineElement.style.color = 'var(--text-light)';
+                    timelineElement.style.marginTop = '0.5rem';
+                    
+                    // Show progress percentage
+                    let progressPercent = 0;
+                    
+                    if (fitnessData.weight !== goalWeight) {
+                        // Calculate how much weight the user has lost/gained from their starting point
+                        const totalChange = Math.abs(goalWeight - startWeight);
+                        const currentChange = Math.abs(currentWeight - startWeight);
+                        
+                        // Calculate progress percentage
+                        progressPercent = Math.min(Math.round((currentChange / totalChange) * 100), 100);
+                        
+                        // If they're moving away from their goal, progress is 0%
+                        if ((startWeight < goalWeight && currentWeight < startWeight) ||
+                            (startWeight > goalWeight && currentWeight > startWeight)) {
+                            progressPercent = 0;
+                        }
+                    } else {
+                        // They are already at their goal
+                        progressPercent = 100;
+                    }
+                    
+                    // Create the timeline content with progress bar
+                    timelineElement.innerHTML = `
+                        <div style="margin-bottom: 0.5rem;">
+                            <span>Progress: <strong>${progressPercent}%</strong></span>
+                        </div>
+                        <div class="progress-bar" style="height: 8px; background: var(--border-color); border-radius: 4px; overflow: hidden; margin-bottom: 0.5rem;">
+                            <div class="progress-fill" style="width: ${progressPercent}%; height: 100%; background: var(--accent-color);"></div>
+                        </div>
+                        <div>
+                            Estimated time to goal: <strong>${monthsToGoal} months</strong> (${weeklyChange.toFixed(2)}kg/week)
+                        </div>
+                    `;
+                    
+                    // Add the timeline element to the DOM
+                    document.getElementById('weightToGo').parentNode.appendChild(timelineElement);
+                }
+
+                // Update macros with proper formatting
+                if (fitnessData.macros) {
+                    document.getElementById('proteinValue').textContent = 
+                        `${Math.round(fitnessData.macros.protein)}g`;
+                    document.getElementById('carbsValue').textContent = 
+                        `${Math.round(fitnessData.macros.carbs)}g`;
+                    document.getElementById('fatValue').textContent = 
+                        `${Math.round(fitnessData.macros.fat)}g`;
+                }
+            } catch (error) {
+                console.error('Error updating stats:', error);
+                alert('There was an error updating your statistics. Please try refreshing the page or complete the fitness assessment again.');
+            }
+        }
+
+        // Show a random fitness tip
+        function showRandomTip() {
+            const tips = [
+                "Stay hydrated! Drink at least 8 glasses of water daily.",
+                "Aim for 7-9 hours of quality sleep each night for optimal recovery.",
+                "Focus on progressive overload in your training to continually challenge your muscles.",
+                "Include a variety of fruits and vegetables in your diet for essential micronutrients.",
+                "Don't skip your warm-up. It prepares your body and helps prevent injuries.",
+                "Consistency is key! Regular workouts are better than occasional intense sessions.",
+                "Rest days are important. Your muscles grow during recovery, not during the workout.",
+                "Track your progress to stay motivated and see how far you've come.",
+                "Prioritize protein intake for muscle recovery and growth.",
+                "Remember to stretch! Flexibility is a crucial component of fitness."
+            ];
+            
+            const randomTip = tips[Math.floor(Math.random() * tips.length)];
+            document.getElementById('fitnessTip').innerHTML = `<i class="fas fa-lightbulb"></i><div>${randomTip}</div>`;
+        }
+
+        // Function to debug BMI calculation
+        function debugBMI() {
+            try {
+                // Get the fitness data
+                const fitnessData = JSON.parse(localStorage.getItem('fitnessResults'));
+                if (!fitnessData) {
+                    alert('No fitness data available for debugging');
+                    return;
+                }
+                
+                // Get current weight
+                const weightData = JSON.parse(localStorage.getItem('weightData')) || { weights: [] };
+                let currentWeight = fitnessData.weight;
+                if (weightData.weights && weightData.weights.length > 0) {
+                    const sortedWeights = [...weightData.weights].sort((a, b) => 
+                        new Date(b.date) - new Date(a.date));
+                    currentWeight = sortedWeights[0].weight;
+                }
+                
+                // Get height
+                const height = fitnessData.height;
+                
+                // Detect units
+                const units = detectUnits(currentWeight, height);
+                
+                // Show debug info
+                let debugInfo = `
+                    <p><strong>Height:</strong> ${height}${units.height}</p>
+                    <p><strong>Weight:</strong> ${currentWeight}${units.weight}</p>
+                    <p><strong>Detected Units:</strong> ${units.system}</p>
+                `;
+                
+                // Calculate BMI in both systems for comparison
+                if (units.system === 'imperial') {
+                    // Convert height to inches if in feet
+                    let heightInInches = height;
+                    if (height < 8) { // Likely in feet
+                        const feet = Math.floor(height);
+                        const inches = Math.round((height - feet) * 12);
+                        heightInInches = feet * 12 + inches;
+                    }
+                    
+                    const imperialBMI = (currentWeight / (heightInInches * heightInInches)) * 703;
+                    debugInfo += `<p><strong>Imperial BMI:</strong> ${imperialBMI.toFixed(2)}</p>`;
+                    
+                    // Also calculate as if metric
+                    const metricBMI = (currentWeight / 2.205) / Math.pow((heightInInches * 2.54) / 100, 2);
+                    debugInfo += `<p><strong>If metric (converted):</strong> ${metricBMI.toFixed(2)}</p>`;
+                } else {
+                    // Calculate metric BMI
+                    const metricBMI = currentWeight / Math.pow(height / 100, 2);
+                    debugInfo += `<p><strong>Metric BMI:</strong> ${metricBMI.toFixed(2)}</p>`;
+                    
+                    // Also calculate as if imperial
+                    const imperialBMI = (currentWeight * 2.205) / Math.pow(height / 2.54, 2) * 703;
+                    debugInfo += `<p><strong>If imperial (converted):</strong> ${imperialBMI.toFixed(2)}</p>`;
+                }
+                
+                // Show example calculations
+                debugInfo += `
+                    <p><strong>Example Calculations:</strong></p>
+                    <p>Metric: 70kg, 170cm → BMI = 70 / (1.7 × 1.7) = 24.2</p>
+                    <p>Imperial: 154lb, 67in → BMI = (154 / (67 × 67)) × 703 = 24.1</p>
+                `;
+                
+                // Create modal dialog
+                const debugModal = document.createElement('div');
+                debugModal.className = 'debug-modal';
+                debugModal.innerHTML = `
+                    <div class="debug-modal-content">
+                        <span class="debug-modal-close">&times;</span>
+                        <h2>BMI Debug Information</h2>
+                        ${debugInfo}
+                        <div class="debug-actions">
+                            <button id="debugFixImperial" class="btn btn-primary">Set as Imperial</button>
+                            <button id="debugFixMetric" class="btn btn-primary">Set as Metric</button>
+                            <button id="debugClose" class="btn btn-danger">Close</button>
+                        </div>
+                    </div>
+                `;
+                
+                // Add modal to body
+                document.body.appendChild(debugModal);
+                
+                // Add event listeners
+                document.querySelector('.debug-modal-close').addEventListener('click', function() {
+                    document.body.removeChild(debugModal);
+                });
+                
+                document.getElementById('debugClose').addEventListener('click', function() {
+                    document.body.removeChild(debugModal);
+                });
+                
+                document.getElementById('debugFixImperial').addEventListener('click', function() {
+                    // Override the unit detection to imperial
+                    localStorage.setItem('userUnitPreference', 'imperial');
+                    alert('Units set to imperial. Please refresh the page.');
+                    document.body.removeChild(debugModal);
+                    location.reload();
+                });
+                
+                document.getElementById('debugFixMetric').addEventListener('click', function() {
+                    // Override the unit detection to metric
+                    localStorage.setItem('userUnitPreference', 'metric');
+                    alert('Units set to metric. Please refresh the page.');
+                    document.body.removeChild(debugModal);
+                    location.reload();
+                });
+                
+            } catch (error) {
+                console.error('Error debugging BMI:', error);
+                alert('An error occurred while debugging BMI calculation.');
+            }
+        }
+
+        // Function to delete the last weight entry
+        function deleteLastWeightEntry() {
+            // Get existing weight data
+            let weightData = JSON.parse(localStorage.getItem('weightData'));
+            
+            // Check if there's data to delete
+            if (!weightData || !weightData.weights || weightData.weights.length === 0) {
+                alert('No weight entries to delete');
+                return;
+            }
+            
+            // Remove the last entry
+            weightData.weights.pop();
+            
+            // Save the updated data
+            localStorage.setItem('weightData', JSON.stringify(weightData));
+            console.log("Last weight entry deleted. Remaining entries:", weightData.weights);
+            
+            // Update chart and stats
+            updateChart();
+            updateStats();
+            
+            // Show success message
+            const deleteBtn = document.getElementById('deleteLastWeightBtn');
+            if (deleteBtn) {
+                const originalText = deleteBtn.innerHTML;
+                deleteBtn.innerHTML = '<i class="fas fa-check"></i> Deleted!';
+                
+                setTimeout(() => {
+                    deleteBtn.innerHTML = originalText;
+                }, 2000);
+            }
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                console.log("DOM loaded, initializing page");
+                
+                // Force metric units for consistency
+                localStorage.setItem('userUnitPreference', 'metric');
+                console.log("Setting unit preference to metric for consistency");
+                
+                // Mobile menu toggle
+                const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+                const navbarMenu = document.getElementById('navbar-menu');
+                
+                if (mobileMenuToggle && navbarMenu) {
+                    // Ensure any old event listeners are removed
+                    const newMobileMenuToggle = mobileMenuToggle.cloneNode(true);
+                    mobileMenuToggle.parentNode.replaceChild(newMobileMenuToggle, mobileMenuToggle);
+                    
+                    // Add event listener to the fresh element
+                    newMobileMenuToggle.addEventListener('click', function(e) {
+                        e.preventDefault(); // Prevent default behavior
+                        console.log("Mobile menu toggle clicked");
+                        navbarMenu.classList.toggle('active');
+                        
+                        // Change icon based on menu state
+                        const icon = this.querySelector('i');
+                        if (icon) {
+                            if (navbarMenu.classList.contains('active')) {
+                                icon.classList.remove('fa-bars');
+                                icon.classList.add('fa-times');
+                            } else {
+                                icon.classList.remove('fa-times');
+                                icon.classList.add('fa-bars');
+                            }
+                        }
+                    });
+                    
+                    // Close menu when a link is clicked
+                    const navLinks = navbarMenu.querySelectorAll('a');
+                    navLinks.forEach(link => {
+                        link.addEventListener('click', function() {
+                            navbarMenu.classList.remove('active');
+                            const icon = newMobileMenuToggle.querySelector('i');
+                            if (icon) {
+                                icon.classList.remove('fa-times');
+                                icon.classList.add('fa-bars');
+                            }
+                        });
+                    });
+                    
+                    console.log("Mobile menu event listeners set up");
+                }
+                
+                // Check if there's fitness data, if not, redirect to fitness assessment
+                fitnessData = JSON.parse(localStorage.getItem('fitnessResults'));
+                console.log("Fitness data loaded:", fitnessData);
+                
+                if (!fitnessData) {
+                    alert('Please complete the fitness assessment first');
+                    window.location.href = 'fitness.html';
+                    return;
+                }
+                
+                // Ensure the weight data exists with initial weight from fitness form
+                let weightData = JSON.parse(localStorage.getItem('weightData'));
+                console.log("Initial weight data from localStorage:", weightData);
+                
+                if (!weightData || !weightData.weights) {
+                    // Create new weight data with initial entry from fitness form
+                    weightData = {
+                        weights: [{
+                            date: new Date().toISOString(),
+                            weight: parseFloat(fitnessData.weight)
+                        }]
+                    };
+                    localStorage.setItem('weightData', JSON.stringify(weightData));
+                    console.log("Created new weight data with initial weight from fitness form:", weightData);
+                }
+                
+                // Add initial weight from fitness form if no entries exist
+                if (weightData.weights.length === 0) {
+                    weightData.weights.push({
+                        date: new Date().toISOString(),
+                        weight: parseFloat(fitnessData.weight)
+                    });
+                    localStorage.setItem('weightData', JSON.stringify(weightData));
+                    console.log("Added initial weight from fitness form to empty weights array:", weightData);
+                }
+                
+                // Display debug info in console
+                console.log("Initial weight from fitness form:", fitnessData.weight);
+                console.log("Goal weight from fitness form:", fitnessData.goalWeight);
+                console.log("Weight entries:", weightData.weights);
+                
+                // Detect units and update the UI accordingly
+                const units = detectUnits(fitnessData.weight, fitnessData.height);
+                const weightUnitLabel = document.getElementById('weightUnitLabel');
+                if (weightUnitLabel) {
+                    weightUnitLabel.textContent = units.weight;
+                }
+                
+                updateStats();
+                updateChart();
+                showRandomTip();
+                
+                // Add click event listener to BMI display for debugging
+                const bmiValue = document.getElementById('bmiValue');
+                if (bmiValue) {
+                    bmiValue.addEventListener('click', function() {
+                        debugBMI();
+                    });
+                    bmiValue.title = "Click to see BMI calculation details";
+                }
+                
+                // Add event listener for add weight button (using onclick to ensure it works)
+                const addWeightBtn = document.getElementById('addWeightBtn');
+                if (addWeightBtn) {
+                    console.log("Setting up add weight button");
+                    // Remove any existing event listeners
+                    addWeightBtn.replaceWith(addWeightBtn.cloneNode(true));
+                    
+                    // Get the new button reference after cloning
+                    const newAddWeightBtn = document.getElementById('addWeightBtn');
+                    
+                    // Add the event listener directly using onclick
+                    newAddWeightBtn.onclick = function() {
+                        console.log("Add weight button clicked");
+                        addWeight();
+                    };
+                } else {
+                    console.error("Add weight button not found");
+                }
+                
+                // Add event listener for delete last weight button
+                const deleteLastWeightBtn = document.getElementById('deleteLastWeightBtn');
+                if (deleteLastWeightBtn) {
+                    console.log("Setting up delete last weight button");
+                    // Remove any existing event listeners
+                    deleteLastWeightBtn.replaceWith(deleteLastWeightBtn.cloneNode(true));
+                    
+                    // Get the new button reference after cloning
+                    const newDeleteBtn = document.getElementById('deleteLastWeightBtn');
+                    
+                    // Add the event listener directly using onclick
+                    newDeleteBtn.onclick = function() {
+                        console.log("Delete last weight button clicked");
+                        deleteLastWeightEntry();
+                    };
+                } else {
+                    console.error("Delete last weight button not found");
+                }
+                
+                // Add event listener for weight input to allow pressing Enter
+                const weightInput = document.getElementById('weightInput');
+                if (weightInput) {
+                    console.log("Setting up weight input");
+                    // Remove any existing event listeners
+                    weightInput.replaceWith(weightInput.cloneNode(true));
+                    
+                    // Get the new input reference after cloning
+                    const newWeightInput = document.getElementById('weightInput');
+                    
+                    // Add the event listener for Enter key
+                    newWeightInput.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            console.log("Enter key pressed in weight input");
+                            addWeight();
+                        }
+                    });
+                } else {
+                    console.error("Weight input not found");
+                }
+
+                // Log localStorage contents for debugging
+                console.log("Current localStorage contents:");
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    console.log(`${key}: ${localStorage.getItem(key)}`);
+                }
+            } catch (error) {
+                console.error('Error initializing page:', error);
+            }
+        });
+    </script>
+
+    <style>
+        .goal-timeline-container {
+            padding: 1.5rem;
+        }
+
+        .timeline-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 1rem;
+            background: var(--card-background);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .timeline-progress {
+            margin-top: 2rem;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            transition: width 0.3s ease;
+        }
+
+        .weight-input-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .weight-input-container input {
+            padding: 0.8rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            width: 150px;
+            font-size: 1rem;
+        }
+
+        .weight-input-container button {
+            padding: 0.8rem 1.5rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .weight-input-container button:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .goal-timeline {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: rgba(57, 73, 171, 0.1);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            text-align: center;
+        }
+
+        .goal-timeline strong {
+            color: var(--accent-color);
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 400px;
+            margin-top: 20px;
+        }
+
+        .btn-danger {
+            background: #f44336;
+        }
+        
+        .btn-danger:hover {
+            background: #d32f2f;
+        }
+        
+        /* Debug Modal Styles */
+        .debug-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .debug-modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .debug-modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #777;
+        }
+        
+        .debug-modal-close:hover {
+            color: #333;
+        }
+        
+        .debug-actions {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+        
+        /* BMI value hover style */
+        #bmiValue {
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        
+        #bmiValue:hover {
+            color: var(--accent-color);
+        }
+        
+        @media (max-width: 768px) {
+            .weight-input-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .weight-input-container input {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+        }
+    </style>
+</body>
+</html> 

@@ -1,0 +1,1630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meal Plans - Fitness Planner</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .dietary-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .dietary-option {
+            background: var(--card-background);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dietary-option:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .dietary-option.selected {
+            border-color: var(--success-color);
+            background: rgba(46, 125, 50, 0.1);
+        }
+
+        .dietary-option i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .dietary-option.selected i {
+            color: var(--success-color);
+        }
+
+        .meal-plan {
+            display: none;
+            margin-top: 2rem;
+        }
+
+        .meal-plan.active {
+            display: block;
+        }
+
+        .meal-card {
+            background: var(--card-background);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .meal-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+        }
+
+        .meal-card h3 i {
+            color: var(--accent-color);
+        }
+
+        .refresh-meal {
+            background-color: var(--card-background);
+            color: var(--primary-color);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .refresh-meal:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: rotate(90deg);
+        }
+        
+        /* Match indicator styles */
+        .match-indicator {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .match-indicator.excellent {
+            background-color: rgba(46, 125, 50, 0.1);
+            color: #2e7d32; /* Success green */
+            border-left: 3px solid #2e7d32;
+        }
+        
+        .match-indicator.good {
+            background-color: rgba(245, 124, 0, 0.1);
+            color: #f57c00; /* Warning orange */
+            border-left: 3px solid #f57c00;
+        }
+        
+        .match-indicator.adjust {
+            background-color: rgba(245, 0, 87, 0.1);
+            color: #f50057; /* Accent color */
+            border-left: 3px solid #f50057;
+        }
+        
+        .macro-focus {
+            margin: 0.5rem 0;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .meals-total {
+            background: var(--card-background);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .meals-total h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .meals-total .total-macros {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .meals-total .macro-item {
+            flex: 1;
+        }
+
+        .meal-plan-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .meal-plan-type {
+            background: var(--card-background);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .meal-plan-type:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .meal-plan-type.selected {
+            border-color: var(--success-color);
+            background: rgba(46, 125, 50, 0.1);
+        }
+
+        .meal-plan-type i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .meal-plan-type.selected i {
+            color: var(--success-color);
+        }
+
+        .meal-plan-type h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .meal-plan-type p {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .meal-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .meal-info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-light);
+        }
+
+        .meal-info-item i {
+            color: var(--primary-color);
+        }
+
+        .ingredients {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .ingredients h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .ingredients ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .ingredients li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .ingredients li::before {
+            content: '•';
+            color: var(--accent-color);
+            position: absolute;
+            left: 0;
+        }
+
+        .instructions {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .instructions h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .instructions ol {
+            padding-left: 1.5rem;
+        }
+
+        .instructions li {
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .macro-info {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .macro-item {
+            flex: 1;
+            text-align: center;
+            padding: 0.5rem;
+            background: rgba(57, 73, 171, 0.1);
+            border-radius: 6px;
+        }
+
+        .macro-item span {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .macro-value {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .meal-plan-types {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .meal-plan-type {
+                padding: 1.2rem;
+            }
+            
+            .meal-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="navbar-logo">
+                <i class="fas fa-heartbeat"></i> Fitness Planner
+            </a>
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle" style="display: block;">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="navbar-menu" id="navbar-menu">
+                <li><a href="fitness.html">Assessment</a></li>
+                <li><a href="results.html">Results</a></li>
+                <li><a href="workout-plan.html">Workouts</a></li>
+                <li><a href="meal-plan.html" class="active">Meal Plans</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero section -->
+    <div class="hero">
+        <h1>Meal Plans</h1>
+        <p>Choose your dietary preference and get personalized meal suggestions</p>
+    </div>
+
+    <!-- Main content -->
+    <div class="container">
+        <!-- Dietary preference selection -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-utensils"></i>
+                <h2>Choose Your Meal Plan Type</h2>
+            </div>
+            <div class="card-body">
+                <div class="meal-plan-types">
+                    <div class="meal-plan-type" data-type="weight-loss">
+                        <i class="fas fa-weight"></i>
+                        <h3>Weight Loss</h3>
+                        <p>Tailored to your calorie goal</p>
+                    </div>
+                    <div class="meal-plan-type" data-type="muscle-gain">
+                        <i class="fas fa-dumbbell"></i>
+                        <h3>Muscle Gain</h3>
+                        <p>Tailored to your calorie goal</p>
+                    </div>
+                    <div class="meal-plan-type" data-type="vegetarian">
+                        <i class="fas fa-leaf"></i>
+                        <h3>Vegetarian</h3>
+                        <p>Plant-based protein options</p>
+                    </div>
+                    <div class="meal-plan-type" data-type="vegan">
+                        <i class="fas fa-seedling"></i>
+                        <h3>Vegan</h3>
+                        <p>100% plant-based meals</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Meal plan display -->
+        <div id="mealPlan" class="meal-plan">
+            <!-- Content will be dynamically populated -->
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Fitness Planner</h3>
+                <ul>
+                    <li><a href="fitness.html">Assessment</a></li>
+                    <li><a href="results.html">Results</a></li>
+                    <li><a href="workout-plan.html">Workouts</a></li>
+                    <li><a href="meal-plan.html">Meal Plans</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="#">Fitness Blog</a></li>
+                    <li><a href="#">Nutrition Guide</a></li>
+                    <li><a href="#">Exercise Library</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Contact</h3>
+                <ul>
+                    <li><a href="#">Support</a></li>
+                    <li><a href="#">Feedback</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 Fitness Planner. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Meal data
+        const mealData = {
+            meat: {
+                breakfast: [
+                    {
+                        name: "Oatmeal with Berries and Almonds",
+                        calories: 400,
+                        prepTime: "15 mins",
+                        servings: 1,
+                        ingredients: [
+                            "1/2 cup rolled oats",
+                            "1 cup unsweetened almond milk",
+                            "1/2 cup mixed berries",
+                            "1 tbsp sliced almonds",
+                            "1 tsp honey (optional)"
+                        ],
+                        instructions: [
+                            "Simmer oats in almond milk until tender",
+                            "Stir in honey if desired",
+                            "Top with berries and almonds"
+                        ],
+                        macros: {
+                            protein: "15g",
+                            carbs: "55g",
+                            fat: "12g"
+                        }
+                    },
+                    {
+                        name: "Greek Yogurt Parfait",
+                        calories: 450,
+                        prepTime: "10 mins",
+                        servings: 1,
+                        ingredients: [
+                            "1 cup non-fat Greek yogurt",
+                            "1/2 cup low-sugar granola",
+                            "1/2 cup sliced strawberries",
+                            "1 tsp chia seeds"
+                        ],
+                        instructions: [
+                            "Layer yogurt, granola, and strawberries in a bowl",
+                            "Sprinkle with chia seeds"
+                        ],
+                        macros: {
+                            protein: "30g",
+                            carbs: "55g",
+                            fat: "10g"
+                        }
+                    },
+                    {
+                        name: "Scrambled Eggs with Spinach & Feta",
+                        calories: 420,
+                        prepTime: "15 mins",
+                        servings: 1,
+                        ingredients: [
+                            "4 large eggs",
+                            "1/2 cup fresh spinach, chopped",
+                            "1 oz crumbled feta cheese",
+                            "1 tsp olive oil"
+                        ],
+                        instructions: [
+                            "Sauté spinach in olive oil",
+                            "Add beaten eggs and cook until softly scrambled",
+                            "Stir in feta cheese"
+                        ],
+                        macros: {
+                            protein: "35g",
+                            carbs: "20g",
+                            fat: "22g"
+                        }
+                    }
+                ],
+                lunch: [
+                    {
+                        name: "Grilled Chicken Salad with Avocado",
+                        calories: 600,
+                        prepTime: "15 mins",
+                        servings: 1,
+                        ingredients: [
+                            "5 oz grilled chicken breast, sliced",
+                            "2 cups mixed greens",
+                            "1/2 avocado, sliced",
+                            "1/2 cup cherry tomatoes",
+                            "1/4 cup cucumber, sliced",
+                            "1 tbsp olive oil & lemon juice dressing"
+                        ],
+                        instructions: [
+                            "Toss greens with tomatoes, cucumber, and avocado",
+                            "Top with chicken slices",
+                            "Drizzle with dressing"
+                        ],
+                        macros: {
+                            protein: "45g",
+                            carbs: "40g",
+                            fat: "30g"
+                        }
+                    },
+                    {
+                        name: "Turkey & Veggie Stir-Fry Salad",
+                        calories: 580,
+                        prepTime: "25 mins",
+                        servings: 1,
+                        ingredients: [
+                            "5 oz lean ground turkey, cooked",
+                            "1 cup mixed bell peppers, sliced",
+                            "1/2 cup broccoli florets, lightly steamed",
+                            "2 cups spinach",
+                            "1 tbsp low-sodium soy sauce",
+                            "1 tsp sesame oil"
+                        ],
+                        instructions: [
+                            "Stir-fry turkey with bell peppers and broccoli in sesame oil",
+                            "Serve over a bed of spinach",
+                            "Drizzle with soy sauce"
+                        ],
+                        macros: {
+                            protein: "50g",
+                            carbs: "50g",
+                            fat: "18g"
+                        }
+                    },
+                    {
+                        name: "Chicken & Brown Rice Bowl",
+                        calories: 670,
+                        prepTime: "25 mins",
+                        servings: 1,
+                        ingredients: [
+                            "6 oz grilled chicken breast, diced",
+                            "1 cup cooked brown rice",
+                            "1/2 cup steamed broccoli",
+                            "1/2 cup carrots, sliced",
+                            "1 tbsp teriyaki sauce (low sodium)"
+                        ],
+                        instructions: [
+                            "Layer rice, vegetables, and chicken in a bowl",
+                            "Drizzle with teriyaki sauce"
+                        ],
+                        macros: {
+                            protein: "55g",
+                            carbs: "70g",
+                            fat: "15g"
+                        }
+                    }
+                ],
+                dinner: [
+                    {
+                        name: "Baked Salmon with Quinoa & Broccoli",
+                        calories: 680,
+                        prepTime: "25 mins",
+                        servings: 1,
+                        ingredients: [
+                            "6 oz salmon fillet",
+                            "1 cup cooked quinoa",
+                            "1 cup broccoli florets",
+                            "1 tsp olive oil",
+                            "Lemon slices, dill, salt, and pepper"
+                        ],
+                        instructions: [
+                            "Season salmon with salt, pepper, dill, and lemon",
+                            "Bake at 400°F for 12-15 min",
+                            "Serve with quinoa and steamed broccoli"
+                        ],
+                        macros: {
+                            protein: "55g",
+                            carbs: "60g",
+                            fat: "25g"
+                        }
+                    },
+                    {
+                        name: "Chicken Breast with Sweet Potato & Asparagus",
+                        calories: 620,
+                        prepTime: "35 mins",
+                        servings: 1,
+                        ingredients: [
+                            "6 oz chicken breast",
+                            "1 medium sweet potato (cubed)",
+                            "1 cup asparagus spears",
+                            "1 tsp olive oil",
+                            "Rosemary, salt, and pepper"
+                        ],
+                        instructions: [
+                            "Roast sweet potato and asparagus with olive oil and rosemary at 400°F for 25 min",
+                            "Grill or bake chicken breast until cooked through"
+                        ],
+                        macros: {
+                            protein: "50g",
+                            carbs: "70g",
+                            fat: "15g"
+                        }
+                    },
+                    {
+                        name: "Ground Turkey Zucchini Boats",
+                        calories: 580,
+                        prepTime: "25 mins",
+                        servings: 1,
+                        ingredients: [
+                            "6 oz lean ground turkey",
+                            "2 medium zucchinis, halved lengthwise",
+                            "1/2 cup diced tomatoes",
+                            "1/4 cup onion, diced",
+                            "1 tsp olive oil",
+                            "Italian herbs, salt, and pepper"
+                        ],
+                        instructions: [
+                            "Sauté turkey with onion and tomatoes",
+                            "Hollow out zucchinis, fill with turkey mixture",
+                            "Bake at 375°F for 20 min"
+                        ],
+                        macros: {
+                            protein: "45g",
+                            carbs: "35g",
+                            fat: "25g"
+                        }
+                    }
+                ]
+            },
+            vegetarian: {
+                breakfast: [
+                    {
+                        name: "Vegetable Omelet with Whole Wheat Toast",
+                        calories: 550,
+                        prepTime: "25 mins",
+                        servings: 1,
+                        ingredients: [
+                            "4 large eggs",
+                            "1/2 cup spinach",
+                            "1/4 cup mushrooms, sliced",
+                            "1/4 cup diced bell peppers",
+                            "2 slices whole wheat bread",
+                            "1 tsp olive oil, salt, and pepper"
+                        ],
+                        instructions: [
+                            "Sauté vegetables in olive oil",
+                            "Add beaten eggs and cook until set",
+                            "Serve with toasted bread"
+                        ],
+                        macros: {
+                            protein: "35g",
+                            carbs: "45g",
+                            fat: "20g"
+                        }
+                    },
+                    {
+                        name: "Greek Yogurt & Berry Smoothie",
+                        calories: 600,
+                        prepTime: "10 mins",
+                        servings: 1,
+                        ingredients: [
+                            "1 cup non-fat Greek yogurt",
+                            "1/2 cup mixed berries",
+                            "1 scoop plant-based protein powder",
+                            "1/2 banana",
+                            "1 tbsp ground flaxseed",
+                            "1 cup almond milk"
+                        ],
+                        instructions: [
+                            "Blend all ingredients until smooth"
+                        ],
+                        macros: {
+                            protein: "40g",
+                            carbs: "70g",
+                            fat: "10g"
+                        }
+                    },
+                    {
+                        name: "Avocado Toast with Tomato & Feta",
+                        calories: 600,
+                        prepTime: "15 mins",
+                        servings: 1,
+                        ingredients: [
+                            "2 slices whole-grain bread",
+                            "1/2 avocado, mashed",
+                            "1 small tomato, sliced",
+                            "1 oz crumbled feta cheese",
+                            "Salt, pepper, and basil leaves"
+                        ],
+                        instructions: [
+                            "Toast bread",
+                            "Spread avocado on toast",
+                            "Top with tomato slices and feta",
+                            "Season lightly"
+                        ],
+                        macros: {
+                            protein: "25g",
+                            carbs: "65g",
+                            fat: "25g"
+                        }
+                    }
+                ],
+                lunch: [
+                    {
+                        name: "Chickpea & Quinoa Salad",
+                        calories: 800,
+                        prepTime: "15 mins",
+                        servings: 1,
+                        ingredients: [
+                            "1 cup cooked quinoa",
+                            "1/2 cup chickpeas, rinsed",
+                            "1 cup diced cucumber",
+                            "1/2 cup cherry tomatoes, halved",
+                            "1/4 cup red onion, diced",
+                            "2 tbsp olive oil, lemon juice, salt, and pepper"
+                        ],
+                        instructions: [
+                            "Mix all ingredients in a bowl",
+                            "Toss with dressing"
+                        ],
+                        macros: {
+                            protein: "35g",
+                            carbs: "95g",
+                            fat: "25g"
+                        }
+                    },
+                    {
+                        name: "Grilled Halloumi Salad",
+                        calories: 820,
+                        prepTime: "15 mins",
+                        servings: 1,
+                        ingredients: [
+                            "4 oz halloumi cheese, grilled",
+                            "2 cups mixed greens",
+                            "1/2 avocado, sliced",
+                            "1/2 cup roasted red peppers",
+                            "1/4 cup quinoa (pre-cooked)",
+                            "1 tbsp olive oil, balsamic vinegar"
+                        ],
+                        instructions: [
+                            "Assemble greens, avocado, red peppers, and quinoa",
+                            "Top with grilled halloumi",
+                            "Drizzle with dressing"
+                        ],
+                        macros: {
+                            protein: "40g",
+                            carbs: "70g",
+                            fat: "30g"
+                        }
+                    },
+                    {
+                        name: "Caprese Pasta Salad",
+                        calories: 800,
+                        prepTime: "15 mins",
+                        servings: 1,
+                        ingredients: [
+                            "2 cups whole wheat pasta (cooked)",
+                            "1 cup cherry tomatoes, halved",
+                            "2 oz fresh mozzarella, diced",
+                            "Fresh basil leaves",
+                            "1 tbsp olive oil, balsamic glaze"
+                        ],
+                        instructions: [
+                            "Toss pasta with tomatoes, mozzarella, and basil",
+                            "Drizzle with olive oil and balsamic glaze"
+                        ],
+                        macros: {
+                            protein: "35g",
+                            carbs: "90g",
+                            fat: "30g"
+                        }
+                    }
+                ],
+                dinner: [
+                    {
+                        name: "Vegetable Lasagna with Spinach & Zucchini",
+                        calories: 820,
+                        prepTime: "45 mins",
+                        servings: 1,
+                        ingredients: [
+                            "3 whole wheat lasagna noodles (cooked)",
+                            "1 cup low-fat ricotta",
+                            "1 cup marinara sauce (low sugar)",
+                            "1 cup spinach",
+                            "1 small zucchini, sliced",
+                            "Italian herbs, salt, and pepper"
+                        ],
+                        instructions: [
+                            "Layer noodles with ricotta, spinach, zucchini, and marinara",
+                            "Bake at 375°F for 25 min"
+                        ],
+                        macros: {
+                            protein: "40g",
+                            carbs: "90g",
+                            fat: "28g"
+                        }
+                    },
+                    {
+                        name: "Stuffed Portobello Mushrooms",
+                        calories: 800,
+                        prepTime: "25 mins",
+                        servings: 1,
+                        ingredients: [
+                            "2 large Portobello mushrooms (stems removed)",
+                            "1/2 cup cooked quinoa",
+                            "1/4 cup diced tomatoes",
+                            "1/4 cup spinach, chopped",
+                            "2 tbsp grated Parmesan or nutritional yeast",
+                            "1 tsp olive oil, garlic, salt, and pepper"
+                        ],
+                        instructions: [
+                            "Mix quinoa, tomatoes, and spinach",
+                            "Fill mushrooms with mixture",
+                            "Top with cheese",
+                            "Bake at 375°F for 20 min"
+                        ],
+                        macros: {
+                            protein: "35g",
+                            carbs: "85g",
+                            fat: "30g"
+                        }
+                    },
+                    {
+                        name: "Vegetarian Chili with Cornbread",
+                        calories: 850,
+                        prepTime: "25 mins",
+                        servings: 1,
+                        ingredients: [
+                            "1/2 cup kidney beans",
+                            "1/2 cup black beans",
+                            "1 cup diced tomatoes",
+                            "1/2 cup corn",
+                            "1/2 cup bell peppers, diced",
+                            "Chili spices, 1 tsp olive oil",
+                            "1 small slice whole grain cornbread"
+                        ],
+                        instructions: [
+                            "Combine beans, tomatoes, corn, and peppers in a pot with spices",
+                            "Simmer for 20 min",
+                            "Serve with cornbread"
+                        ],
+                        macros: {
+                            protein: "35g",
+                            carbs: "105g",
+                            fat: "25g"
+                        }
+                    }
+                ]
+            },
+            vegan: {
+                breakfast: [
+                    {
+                        name: "Tofu Scramble with Avocado Toast",
+                        calories: 600,
+                        prepTime: "25 mins",
+                        servings: 1,
+                        ingredients: [
+                            "1/2 block firm tofu, crumbled",
+                            "1/4 cup bell peppers, diced",
+                            "1/4 cup onions, diced",
+                            "1 cup spinach",
+                            "1/2 avocado, sliced",
+                            "2 slices whole-grain bread",
+                            "1 tsp olive oil, turmeric, salt, and pepper"
+                        ],
+                        instructions: [
+                            "Sauté onions and bell peppers in olive oil",
+                            "Add crumbled tofu, spinach, turmeric, salt, and pepper",
+                            "Serve with toasted bread topped with avocado"
+                        ],
+                        macros: {
+                            protein: "35g",
+                            carbs: "55g",
+                            fat: "25g"
+                        }
+                    },
+                    {
+                        name: "Vegan Protein Smoothie Bowl",
+                        calories: 620,
+                        prepTime: "10 mins",
+                        servings: 1,
+                        ingredients: [
+                            "1 scoop vegan protein powder",
+                            "1 banana",
+                            "1/2 cup frozen mixed berries",
+                            "1 cup almond milk",
+                            "2 tbsp almond butter",
+                            "1 tbsp chia seeds"
+                        ],
+                        instructions: [
+                            "Blend banana, berries, protein powder, and almond milk",
+                            "Pour into a bowl",
+                            "Top with almond butter and chia seeds"
+                        ],
+                        macros: {
+                            protein: "40g",
+                            carbs: "70g",
+                            fat: "15g"
+                        }
+                    },
+                    {
+                        name: "Overnight Oats with Maple & Berries",
+                        calories: 600,
+                        prepTime: "10 mins (prep the night before)",
+                        servings: 1,
+                        ingredients: [
+                            "1/2 cup rolled oats",
+                            "1 tbsp chia seeds",
+                            "1 cup almond milk",
+                            "1/2 cup mixed berries",
+                            "1 tsp maple syrup"
+                        ],
+                        instructions: [
+                            "Combine all ingredients in a jar",
+                            "Refrigerate overnight",
+                            "Stir before serving"
+                        ],
+                        macros: {
+                            protein: "30g",
+                            carbs: "70g",
+                            fat: "20g"
+                        }
+                    }
+                ],
+                lunch: [
+                    {
+                        name: "Quinoa & Black Bean Salad with Avocado",
+                        calories: 800,
+                        prepTime: "15 mins",
+                        servings: 1,
+                        ingredients: [
+                            "1 cup cooked quinoa",
+                            "1/2 cup black beans, rinsed",
+                            "1/2 avocado, diced",
+                            "1 cup diced bell peppers",
+                            "1/2 cup corn kernels",
+                            "1 tbsp olive oil, lime juice, salt, and pepper"
+                        ],
+                        instructions: [
+                            "Toss all ingredients in a large bowl with olive oil and lime juice"
+                        ],
+                        macros: {
+                            protein: "30g",
+                            carbs: "95g",
+                            fat: "30g"
+                        }
+                    },
+                    {
+                        name: "Chickpea & Spinach Curry Bowl",
+                        calories: 800,
+                        prepTime: "25 mins",
+                        servings: 1,
+                        ingredients: [
+                            "1/2 cup chickpeas, cooked",
+                            "1 cup diced tomatoes",
+                            "1 cup spinach",
+                            "1/2 cup coconut milk (light)",
+                            "1 cup cooked brown rice",
+                            "Curry spices (cumin, coriander, turmeric), garlic, salt"
+                        ],
+                        instructions: [
+                            "Simmer chickpeas, tomatoes, and spices with coconut milk",
+                            "Stir in spinach",
+                            "Serve over brown rice"
+                        ],
+                        macros: {
+                            protein: "30g",
+                            carbs: "100g",
+                            fat: "25g"
+                        }
+                    },
+                    {
+                        name: "Vegan Sushi Bowl",
+                        calories: 820,
+                        prepTime: "15 mins",
+                        servings: 1,
+                        ingredients: [
+                            "1 cup sushi rice (cooked and seasoned with rice vinegar)",
+                            "1/2 cup edamame",
+                            "1/2 avocado, sliced",
+                            "1/2 cup shredded carrots",
+                            "1/4 cup cucumber, diced",
+                            "Sesame seeds and a drizzle of soy sauce"
+                        ],
+                        instructions: [
+                            "Combine all ingredients in a bowl",
+                            "Toss lightly with soy sauce and sesame seeds"
+                        ],
+                        macros: {
+                            protein: "30g",
+                            carbs: "95g",
+                            fat: "30g"
+                        }
+                    }
+                ],
+                dinner: [
+                    {
+                        name: "Vegan Stuffed Bell Peppers",
+                        calories: 820,
+                        prepTime: "25 mins",
+                        servings: 1,
+                        ingredients: [
+                            "2 large bell peppers, halved",
+                            "1 cup cooked brown rice",
+                            "1/2 cup black beans",
+                            "1/2 cup corn",
+                            "1/2 cup diced tomatoes",
+                            "1 tsp olive oil, cumin, salt, and pepper"
+                        ],
+                        instructions: [
+                            "Mix rice, beans, corn, and tomatoes with spices",
+                            "Fill bell peppers with mixture",
+                            "Bake at 375°F for 20-25 min"
+                        ],
+                        macros: {
+                            protein: "30g",
+                            carbs: "90g",
+                            fat: "28g"
+                        }
+                    },
+                    {
+                        name: "Vegan Pad Thai with Tofu",
+                        calories: 840,
+                        prepTime: "25 mins",
+                        servings: 1,
+                        ingredients: [
+                            "6 oz firm tofu, cubed",
+                            "2 cups rice noodles (cooked)",
+                            "1 cup bean sprouts",
+                            "1/2 cup shredded carrots",
+                            "2 green onions, sliced",
+                            "2 tbsp tamarind paste, 1 tbsp peanut butter, 1 tbsp lime juice, 1 tsp chili flakes"
+                        ],
+                        instructions: [
+                            "Stir-fry tofu until browned",
+                            "Add noodles, vegetables, and sauce",
+                            "Toss to combine"
+                        ],
+                        macros: {
+                            protein: "35g",
+                            carbs: "95g",
+                            fat: "30g"
+                        }
+                    },
+                    {
+                        name: "Vegan Chili with Quinoa",
+                        calories: 840,
+                        prepTime: "25 mins",
+                        servings: 1,
+                        ingredients: [
+                            "1/2 cup kidney beans",
+                            "1/2 cup black beans",
+                            "1 cup diced tomatoes",
+                            "1/2 cup quinoa (cooked)",
+                            "1/2 cup chopped bell peppers",
+                            "Chili spices, 1 tsp olive oil, salt, and pepper"
+                        ],
+                        instructions: [
+                            "Combine all ingredients in a pot",
+                            "Simmer for 20-25 min",
+                            "Serve hot"
+                        ],
+                        macros: {
+                            protein: "30g",
+                            carbs: "105g",
+                            fat: "25g"
+                        }
+                    }
+                ]
+            }
+        };
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            const mealPlanTypes = document.querySelectorAll('.meal-plan-type');
+            const mealPlan = document.getElementById('mealPlan');
+            const mealPlanTypesContainer = document.querySelector('.meal-plan-types');
+
+            // Get fitness data from local storage
+            const fitnessData = JSON.parse(localStorage.getItem('fitnessResults'));
+            if (!fitnessData) {
+                window.location.href = 'fitness.html';
+                return;
+            }
+
+            // Determine the user's fitness goal and set appropriate diet type
+            let userGoal = 'weight-loss';
+            if (fitnessData.fitnessGoal === 'muscle-gain') {
+                userGoal = 'muscle-gain';
+            } else if (fitnessData.fitnessGoal === 'weight-loss') {
+                userGoal = 'weight-loss';
+            } else if (fitnessData.fitnessGoal === 'maintenance') {
+                userGoal = 'weight-loss'; // Default to weight loss for maintenance
+            }
+
+            // Get user's target calories
+            const userCalories = fitnessData.targetCalories || 2000;
+            console.log("User's fitness goal:", userGoal);
+            console.log("User's target calories:", userCalories);
+
+            // Filter and only show appropriate diet types
+            mealPlanTypes.forEach(type => {
+                const typeValue = type.dataset.type;
+                
+                // Hide all diet types except the relevant one (weight-loss or muscle-gain) 
+                // and always keep vegetarian and vegan visible
+                if (typeValue !== userGoal && typeValue !== 'vegetarian' && typeValue !== 'vegan') {
+                    type.style.display = 'none';
+                }
+                
+                // Auto-select the appropriate diet type
+                if (type.dataset.type === userGoal) {
+                    type.classList.add('selected');
+                    generateMealPlan(userGoal);
+                }
+                
+                type.addEventListener('click', function() {
+                    // Remove selected class from all types
+                    mealPlanTypes.forEach(t => t.classList.remove('selected'));
+                    // Add selected class to clicked type
+                    this.classList.add('selected');
+
+                    // Get selected type
+                    const planType = this.dataset.type;
+                    
+                    // Generate meal plan
+                    generateMealPlan(planType);
+                });
+            });
+
+            // Update heading to show appropriate goal
+            const mealPlanHeading = document.querySelector('.section-heading h2');
+            if (mealPlanHeading) {
+                mealPlanHeading.innerHTML = `${userGoal === 'muscle-gain' ? 'Muscle Gain' : 'Weight Loss'} Meal Plan`;
+            }
+
+            // Set up event delegation for meal refresh buttons
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('refresh-meal') || 
+                    e.target.parentElement.classList.contains('refresh-meal')) {
+                    const button = e.target.classList.contains('refresh-meal') ? 
+                                   e.target : e.target.parentElement;
+                    const mealType = button.dataset.mealType;
+                    const planType = document.querySelector('.meal-plan-type.selected').dataset.type;
+                    
+                    refreshMeal(mealType, planType);
+                }
+            });
+            
+            // Mobile menu toggle
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            const navbarMenu = document.getElementById('navbar-menu');
+            
+            if (mobileMenuToggle && navbarMenu) {
+                // Ensure any old event listeners are removed
+                const newMobileMenuToggle = mobileMenuToggle.cloneNode(true);
+                mobileMenuToggle.parentNode.replaceChild(newMobileMenuToggle, mobileMenuToggle);
+                
+                // Add event listener to the fresh element
+                newMobileMenuToggle.addEventListener('click', function(e) {
+                    e.preventDefault(); // Prevent default behavior
+                    console.log("Mobile menu toggle clicked");
+                    navbarMenu.classList.toggle('active');
+                    
+                    // Change icon based on menu state
+                    const icon = this.querySelector('i');
+                    if (icon) {
+                        if (navbarMenu.classList.contains('active')) {
+                            icon.classList.remove('fa-bars');
+                            icon.classList.add('fa-times');
+                        } else {
+                            icon.classList.remove('fa-times');
+                            icon.classList.add('fa-bars');
+                        }
+                    }
+                });
+                
+                // Close menu when a link is clicked
+                const navLinks = navbarMenu.querySelectorAll('a');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        navbarMenu.classList.remove('active');
+                        const icon = newMobileMenuToggle.querySelector('i');
+                        if (icon) {
+                            icon.classList.remove('fa-times');
+                            icon.classList.add('fa-bars');
+                        }
+                    });
+                });
+                
+                console.log("Mobile menu event listeners set up");
+            }
+        });
+
+        // Generate meal plan based on meal plan type
+        function generateMealPlan(planType) {
+            const mealPlan = document.getElementById('mealPlan');
+            let meals;
+            
+            // Get user's fitness data
+            const fitnessData = JSON.parse(localStorage.getItem('fitnessResults'));
+            // Get user's target calories
+            const userCalories = fitnessData.targetCalories || 2000;
+            const userGoal = fitnessData.fitnessGoal;
+            
+            console.log(`Generating meal plan for user with ${userCalories} target calories and goal: ${userGoal}`);
+            
+            // Determine which meal data to use based on plan type
+            switch (planType) {
+                case 'weight-loss':
+                    meals = mealData.meat;
+                    break;
+                case 'muscle-gain':
+                    meals = mealData.meat;
+                    break;
+                case 'vegetarian':
+                    // Use the appropriate vegetarian data based on user goal
+                    meals = mealData.vegetarian;
+                    break;
+                case 'vegan':
+                    // Use the appropriate vegan data based on user goal
+                    meals = mealData.vegan;
+                    break;
+                default:
+                    // Default to weight loss if unknown
+                    meals = mealData.meat;
+            }
+
+            // Calculate target calories for each meal
+            const breakfastPortion = 0.25; // 25% of calories
+            const lunchPortion = 0.35; // 35% of calories
+            const dinnerPortion = 0.35; // 35% of calories
+            const snackPortion = 0.05; // 5% of calories (reserved)
+
+            const targetBreakfastCals = Math.round(userCalories * breakfastPortion);
+            const targetLunchCals = Math.round(userCalories * lunchPortion);
+            const targetDinnerCals = Math.round(userCalories * dinnerPortion);
+            
+            console.log(`Target calories: ${userCalories}`);
+            console.log(`Breakfast target: ${targetBreakfastCals}`);
+            console.log(`Lunch target: ${targetLunchCals}`);
+            console.log(`Dinner target: ${targetDinnerCals}`);
+            console.log(`Using meal data for: ${planType} with user goal: ${userGoal}`);
+            
+            // Select meals that fit calorie targets
+            const selectedMeals = {
+                breakfast: getRandomMeal('breakfast', meals),
+                lunch: getRandomMeal('lunch', meals),
+                dinner: getRandomMeal('dinner', meals)
+            };
+            
+            // Store selected meals in window object for refresh function
+            window.currentMeals = selectedMeals;
+            window.currentMealType = planType;
+            window.userGoal = userGoal;
+            
+            // Calculate total calories and macros
+            const totalCalories = Math.round(
+                selectedMeals.breakfast.calories + 
+                selectedMeals.lunch.calories + 
+                selectedMeals.dinner.calories
+            );
+            
+            const totalProtein = parseInt(selectedMeals.breakfast.macros.protein) + 
+                               parseInt(selectedMeals.lunch.macros.protein) + 
+                               parseInt(selectedMeals.dinner.macros.protein);
+            
+            const totalCarbs = parseInt(selectedMeals.breakfast.macros.carbs) + 
+                             parseInt(selectedMeals.lunch.macros.carbs) + 
+                             parseInt(selectedMeals.dinner.macros.carbs);
+            
+            const totalFat = parseInt(selectedMeals.breakfast.macros.fat) + 
+                           parseInt(selectedMeals.lunch.macros.fat) + 
+                           parseInt(selectedMeals.dinner.macros.fat);
+            
+            let planTitle = planType.replace('-', ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+            if (planType === 'vegetarian' || planType === 'vegan') {
+                planTitle = `${planTitle} ${userGoal === 'muscle-gain' ? 'Muscle Gain' : 'Weight Loss'}`;
+            }
+            
+            // Get calorie match indicator (how close the meal plan is to target)
+            const calorieMatchPercent = Math.round((totalCalories / userCalories) * 100);
+            let matchIndicator = "";
+            
+            if (Math.abs(calorieMatchPercent - 100) <= 5) {
+                // Within 5% of target - excellent match
+                matchIndicator = `<span class="match-indicator excellent">Excellent calorie match (${calorieMatchPercent}% of target)</span>`;
+            } else if (Math.abs(calorieMatchPercent - 100) <= 10) {
+                // Within 10% of target - good match
+                matchIndicator = `<span class="match-indicator good">Good calorie match (${calorieMatchPercent}% of target)</span>`;
+            } else {
+                // More than 10% off target - adjust portions advice
+                if (calorieMatchPercent > 100) {
+                    // Too many calories
+                    matchIndicator = `<span class="match-indicator adjust">Consider reducing portions (${calorieMatchPercent}% of target)</span>`;
+                } else {
+                    // Too few calories
+                    matchIndicator = `<span class="match-indicator adjust">Consider adding a small snack (${calorieMatchPercent}% of target)</span>`;
+                }
+            }
+            
+            let html = `
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-utensils"></i>
+                        <h2>Your ${planTitle} Meal Plan</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="meals-total">
+                            <h3><i class="fas fa-calculator"></i> Daily Nutrition Summary</h3>
+                            <p>This meal plan provides approximately ${totalCalories} calories (target: ${Math.round(userCalories)} calories)</p>
+                            <p>${matchIndicator}</p>
+                            <div class="total-macros">
+                                <div class="macro-item">
+                                    <span>Total Protein</span>
+                                    <div class="macro-value">${totalProtein}g</div>
+                                </div>
+                                <div class="macro-item">
+                                    <span>Total Carbs</span>
+                                    <div class="macro-value">${totalCarbs}g</div>
+                                </div>
+                                <div class="macro-item">
+                                    <span>Total Fat</span>
+                                    <div class="macro-value">${totalFat}g</div>
+                                </div>
+                            </div>
+                        </div>
+            `;
+
+            // Add each meal type
+            ['breakfast', 'lunch', 'dinner'].forEach(mealType => {
+                const meal = selectedMeals[mealType];
+                const mealIcon = mealType === 'breakfast' ? 'sun' : mealType === 'lunch' ? 'cloud-sun' : 'moon';
+                
+                html += `
+                    <div class="meal-card" id="${mealType}-meal">
+                        <h3>
+                            <div>
+                                <i class="fas fa-${mealIcon}"></i> 
+                                ${mealType.charAt(0).toUpperCase() + mealType.slice(1)}: ${meal.name}
+                            </div>
+                            <button class="refresh-meal" data-meal-type="${mealType}" title="Get a different ${mealType} option">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </h3>
+                        <div class="meal-info">
+                            <div class="meal-info-item">
+                                <i class="fas fa-fire"></i>
+                                <span>${meal.calories} calories</span>
+                            </div>
+                            <div class="meal-info-item">
+                                <i class="fas fa-clock"></i>
+                                <span>${meal.prepTime}</span>
+                            </div>
+                            <div class="meal-info-item">
+                                <i class="fas fa-users"></i>
+                                <span>${meal.servings} serving</span>
+                            </div>
+                        </div>
+                        <div class="ingredients">
+                            <h4>Ingredients</h4>
+                            <ul>
+                                ${meal.ingredients.map(ingredient => `<li>${ingredient}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div class="instructions">
+                            <h4>Instructions</h4>
+                            <ol>
+                                ${meal.instructions.map(instruction => `<li>${instruction}</li>`).join('')}
+                            </ol>
+                        </div>
+                        <div class="macro-info">
+                            <div class="macro-item">
+                                <span>Protein</span>
+                                <div class="macro-value">${meal.macros.protein}</div>
+                            </div>
+                            <div class="macro-item">
+                                <span>Carbs</span>
+                                <div class="macro-value">${meal.macros.carbs}</div>
+                            </div>
+                            <div class="macro-item">
+                                <span>Fat</span>
+                                <div class="macro-value">${meal.macros.fat}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `
+                    </div>
+                </div>
+            `;
+
+            mealPlan.innerHTML = html;
+            mealPlan.classList.add('active');
+        }
+
+        // Get a random meal from the available options
+        function getRandomMeal(mealType, meals) {
+            const availableMeals = meals[mealType];
+            
+            // Get user's target calories from localStorage
+            const fitnessData = JSON.parse(localStorage.getItem('fitnessResults'));
+            const userCalories = fitnessData.targetCalories || 2000;
+            
+            // Calculate target calories for this meal type
+            let targetMealCalories;
+            if (mealType === 'breakfast') {
+                targetMealCalories = Math.round(userCalories * 0.25); // 25% of daily calories
+            } else if (mealType === 'lunch') {
+                targetMealCalories = Math.round(userCalories * 0.35); // 35% of daily calories
+            } else { // dinner
+                targetMealCalories = Math.round(userCalories * 0.35); // 35% of daily calories
+            }
+            
+            console.log(`Target calories for ${mealType}: ${targetMealCalories}`);
+            
+            // Calculate calorie tolerance (range of acceptable calories)
+            const tolerance = targetMealCalories * 0.15; // 15% tolerance
+            
+            // First, try to find meals that are within the tolerance range
+            const suitableMeals = availableMeals.filter(meal => {
+                return Math.abs(meal.calories - targetMealCalories) <= tolerance;
+            });
+            
+            console.log(`Found ${suitableMeals.length} suitable ${mealType} meals within calorie range`);
+            
+            // If we found suitable meals, select one randomly
+            if (suitableMeals.length > 0) {
+                const mealIndex = Math.floor(Math.random() * suitableMeals.length);
+                return suitableMeals[mealIndex];
+            }
+            
+            // If no meals are within tolerance, select the closest one by calorie count
+            let closestMeal = availableMeals[0];
+            let smallestDiff = Math.abs(availableMeals[0].calories - targetMealCalories);
+            
+            for (let i = 1; i < availableMeals.length; i++) {
+                const currentDiff = Math.abs(availableMeals[i].calories - targetMealCalories);
+                if (currentDiff < smallestDiff) {
+                    smallestDiff = currentDiff;
+                    closestMeal = availableMeals[i];
+                }
+            }
+            
+            console.log(`Selected closest ${mealType} meal with ${closestMeal.calories} calories (target: ${targetMealCalories})`);
+            return closestMeal;
+        }
+
+        // Refresh a specific meal
+        function refreshMeal(mealType, planType) {
+            // Get user goal from window or localStorage
+            const fitnessData = JSON.parse(localStorage.getItem('fitnessResults'));
+            const userGoal = window.userGoal || fitnessData.fitnessGoal;
+            const userCalories = fitnessData.targetCalories || 2000;
+            
+            // Get new meal
+            let meals;
+            switch (planType) {
+                case 'weight-loss':
+                    meals = mealData.meat;
+                    break;
+                case 'muscle-gain':
+                    meals = mealData.meat;
+                    break;
+                case 'vegetarian':
+                    meals = mealData.vegetarian;
+                    break;
+                case 'vegan':
+                    meals = mealData.vegan;
+                    break;
+                default:
+                    meals = mealData.meat;
+            }
+            
+            // Get a new random meal (using our calorie-filtered function)
+            const newMeal = getRandomMeal(mealType, meals);
+            
+            // Update the current meals object
+            window.currentMeals[mealType] = newMeal;
+            
+            // Update the meal card
+            const mealCard = document.getElementById(`${mealType}-meal`);
+            const mealIcon = mealType === 'breakfast' ? 'sun' : mealType === 'lunch' ? 'cloud-sun' : 'moon';
+            
+            // Create updated HTML
+            let html = `
+                <h3>
+                    <div>
+                        <i class="fas fa-${mealIcon}"></i> 
+                        ${mealType.charAt(0).toUpperCase() + mealType.slice(1)}: ${newMeal.name}
+                    </div>
+                    <button class="refresh-meal" data-meal-type="${mealType}" title="Get a different ${mealType} option">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </h3>
+                <div class="meal-info">
+                    <div class="meal-info-item">
+                        <i class="fas fa-fire"></i>
+                        <span>${newMeal.calories} calories</span>
+                    </div>
+                    <div class="meal-info-item">
+                        <i class="fas fa-clock"></i>
+                        <span>${newMeal.prepTime}</span>
+                    </div>
+                    <div class="meal-info-item">
+                        <i class="fas fa-users"></i>
+                        <span>${newMeal.servings} serving</span>
+                    </div>
+                </div>
+                <div class="ingredients">
+                    <h4>Ingredients</h4>
+                    <ul>
+                        ${newMeal.ingredients.map(ingredient => `<li>${ingredient}</li>`).join('')}
+                    </ul>
+                </div>
+                <div class="instructions">
+                    <h4>Instructions</h4>
+                    <ol>
+                        ${newMeal.instructions.map(instruction => `<li>${instruction}</li>`).join('')}
+                    </ol>
+                </div>
+                <div class="macro-info">
+                    <div class="macro-item">
+                        <span>Protein</span>
+                        <div class="macro-value">${newMeal.macros.protein}</div>
+                    </div>
+                    <div class="macro-item">
+                        <span>Carbs</span>
+                        <div class="macro-value">${newMeal.macros.carbs}</div>
+                    </div>
+                    <div class="macro-item">
+                        <span>Fat</span>
+                        <div class="macro-value">${newMeal.macros.fat}</div>
+                    </div>
+                </div>
+            `;
+            
+            mealCard.innerHTML = html;
+            
+            // Update the daily totals
+            updateTotals();
+        }
+        
+        // Update the totals display
+        function updateTotals() {
+            if (!window.currentMeals) return;
+            
+            const totalCalories = Math.round(
+                window.currentMeals.breakfast.calories + 
+                window.currentMeals.lunch.calories + 
+                window.currentMeals.dinner.calories
+            );
+            
+            const totalProtein = parseInt(window.currentMeals.breakfast.macros.protein) + 
+                               parseInt(window.currentMeals.lunch.macros.protein) + 
+                               parseInt(window.currentMeals.dinner.macros.protein);
+            
+            const totalCarbs = parseInt(window.currentMeals.breakfast.macros.carbs) + 
+                             parseInt(window.currentMeals.lunch.macros.carbs) + 
+                             parseInt(window.currentMeals.dinner.macros.carbs);
+            
+            const totalFat = parseInt(window.currentMeals.breakfast.macros.fat) + 
+                           parseInt(window.currentMeals.lunch.macros.fat) + 
+                           parseInt(window.currentMeals.dinner.macros.fat);
+            
+            // Get user's target calories
+            const fitnessData = JSON.parse(localStorage.getItem('fitnessResults'));
+            const userCalories = fitnessData.targetCalories || 2000;
+            const userGoal = fitnessData.fitnessGoal;
+            const planType = window.currentMealType;
+            
+            // Calculate calorie match percentage
+            const calorieMatchPercent = Math.round((totalCalories / userCalories) * 100);
+            let matchIndicator = "";
+            
+            if (Math.abs(calorieMatchPercent - 100) <= 5) {
+                // Within 5% of target - excellent match
+                matchIndicator = `<span class="match-indicator excellent">Excellent calorie match (${calorieMatchPercent}% of target)</span>`;
+            } else if (Math.abs(calorieMatchPercent - 100) <= 10) {
+                // Within 10% of target - good match
+                matchIndicator = `<span class="match-indicator good">Good calorie match (${calorieMatchPercent}% of target)</span>`;
+            } else {
+                // More than 10% off target - adjust portions advice
+                if (calorieMatchPercent > 100) {
+                    // Too many calories
+                    matchIndicator = `<span class="match-indicator adjust">Consider reducing portions (${calorieMatchPercent}% of target)</span>`;
+                } else {
+                    // Too few calories
+                    matchIndicator = `<span class="match-indicator adjust">Consider adding a small snack (${calorieMatchPercent}% of target)</span>`;
+                }
+            }
+            
+            // Update the totals display
+            const totalsDiv = document.querySelector('.meals-total');
+            if (totalsDiv) {
+                let planTitle = planType.replace('-', ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                if (planType === 'vegetarian' || planType === 'vegan') {
+                    planTitle = `${planTitle} ${userGoal === 'muscle-gain' ? 'Muscle Gain' : 'Weight Loss'}`;
+                }
+                
+                const macroText = userGoal === 'muscle-gain' 
+                    ? 'High in protein and complex carbs for muscle building'
+                    : 'Protein-rich with moderate carbs for fat loss';
+                
+                totalsDiv.innerHTML = `
+                    <h3><i class="fas fa-calculator"></i> Daily Nutrition Summary</h3>
+                    <p>This ${planTitle} meal plan provides approximately ${totalCalories} calories (target: ${Math.round(userCalories)} calories)</p>
+                    <p>${matchIndicator}</p>
+                    <p class="macro-focus"><i class="fas fa-bullseye"></i> ${macroText}</p>
+                    <div class="total-macros">
+                        <div class="macro-item">
+                            <span>Total Protein</span>
+                            <div class="macro-value">${totalProtein}g</div>
+                        </div>
+                        <div class="macro-item">
+                            <span>Total Carbs</span>
+                            <div class="macro-value">${totalCarbs}g</div>
+                        </div>
+                        <div class="macro-item">
+                            <span>Total Fat</span>
+                            <div class="macro-value">${totalFat}g</div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html> 
